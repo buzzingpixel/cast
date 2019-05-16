@@ -1,0 +1,7 @@
+{
+    "assets": "themes",
+    "enableESLint": true,
+    "enableJSCS": false,
+    "enableJSHint": false,
+    "jsOneToOneMode": true
+}

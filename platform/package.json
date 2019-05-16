@@ -1,0 +1,11 @@
+{
+    "name": "buzzingpixel-cast-platform",
+    "version": "1.0.0",
+    "description": "Cast Platform Specific Tools",
+    "homepage": "https://www.buzzingpixel.com",
+    "license": "UNLICENSED",
+    "author": "BuzzingPixel",
+    "dependencies": {
+        "eslint": "^5.15.3"
+    }
+}

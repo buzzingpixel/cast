@@ -1,0 +1,79 @@
+version: '3'
+
+services:
+  utility:
+    image: buzzingpixel/utility:1.1.0
+    container_name: utility-cast
+    environment:
+      HOSTNAME: utility-cast
+    volumes:
+      - .:/app
+      - cache-volume:/cache-volume
+      - db-volume:/db-volume
+      - node-modules-volume:/node-modules-volume
+    command: bash -c "chmod +x /app/scripts/dev/devUtilityScript.sh && /app/scripts/dev/devUtilityScript.sh"
+    networks:
+      common-cast-network:
+  web-ee-3:
+    image: buzzingpixel/nginx:1.0.2
+    container_name: nginx-ee-3-cast
+    environment:
+      HOSTNAME: nginx-ee-3-cast
+    ports:
+      - 18474:80
+    volumes:
+      - ./serverConfig/nginx/cast-ee-3.conf:/etc/nginx/conf.d/cast-ee-3.conf:delegated
+      - .:/app:delegated
+      - cache-volume:/app/cache
+    networks:
+      common-cast-network:
+        aliases:
+          - cast-ee-3.test
+  php:
+    image: buzzingpixel/php7.2:1.0.6
+    container_name: php-cast
+    environment:
+      HOSTNAME: php-cast
+      COMPOSER_HOME: /composer-home-volume
+    volumes:
+      - ./serverConfig/php/php-custom-config.ini:/usr/local/etc/php/conf.d/php-custom-config.ini:delegated
+      - ./serverConfig/php/php-config-dev.ini:/usr/local/etc/php/conf.d/php-env-config.ini:delegated
+      - ./serverConfig/php/fpm-www.conf:/usr/local/etc/php-fpm.d/www.conf:delegated
+      - .:/app:delegated
+      - cache-volume:/app/cache
+      - composer-home-volume:/composer-home-volume
+    networks:
+      common-cast-network:
+  db-ee-3:
+    image: buzzingpixel/mariadb:2.0.1
+    container_name: db-ee-3-cast
+    restart: always
+    environment:
+      HOSTNAME: db-ee-3-cast
+    user: "1000:50"
+    volumes:
+      - db-volume:/var/lib/mysql
+    ports:
+      - 39904:3306
+    networks:
+      common-cast-network:
+  node:
+    image: node:11.12.0
+    container_name: node-cast
+    volumes:
+      - .:/app
+      - node-modules-volume:/app/node_modules
+      - yarn-cache-volume:/usr/local/share/.cache/yarn
+    command: bash -c "sleep infinity & wait"
+    networks:
+      common-cast-network:
+
+volumes:
+  cache-volume:
+  composer-home-volume:
+  db-volume:
+  node-modules-volume:
+  yarn-cache-volume:
+
+networks:
+  common-cast-network:

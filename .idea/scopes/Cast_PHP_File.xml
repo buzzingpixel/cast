@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Cast PHP File" pattern="file[cast]:src//*||file[cast]:tests//*" />
+</component>
