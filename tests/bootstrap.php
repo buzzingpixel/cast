@@ -9,6 +9,7 @@ error_reporting(-1);
 define('TESTS_BASE_PATH', __DIR__);
 
 define('TESTING_APP_PATH', dirname(__DIR__));
+define('BASEPATH', TESTING_APP_PATH);
 
 define('APP_BASE_PATH', TESTING_APP_PATH);
 

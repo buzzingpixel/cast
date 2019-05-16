@@ -27,12 +27,18 @@
     "autoload": {
         "psr-4": {
             "BuzzingPixel\\Cast\\": "src"
-        }
+        },
+        "classmap": [
+            "src/ExpressionEngine/ft.cast.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests"
-        }
+        },
+        "classmap": [
+            "work/testing/ee3/system/ee/legacy/fieldtypes/EE_Fieldtype.php"
+        ]
     },
     "config": {
         "bin-compat": "full",

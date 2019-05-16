@@ -1,5 +1,6 @@
 parameters:
     level: max
+    bootstrap: %currentWorkingDirectory%/phpstanBootstrap.php
 
 includes:
     - vendor/phpstan/phpstan-deprecation-rules/rules.neon

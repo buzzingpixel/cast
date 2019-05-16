@@ -19,6 +19,7 @@
         <whitelist processUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">src</directory>
             <exclude>
+                <directory>src/Cast/constants.php</directory>
             </exclude>
         </whitelist>
     </filter>
