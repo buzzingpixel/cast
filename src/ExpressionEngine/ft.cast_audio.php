@@ -3,6 +3,12 @@
 declare(strict_types=1);
 
 use BuzzingPixel\Cast\Cast\Constants;
+use BuzzingPixel\Cast\Cast\Di;
+use BuzzingPixel\Cast\Cast\Facade\PhpInternals;
+use BuzzingPixel\Cast\ExpressionEngine\Service\NormalizePaths;
+use EllisLab\ExpressionEngine\Service\Validation\Factory as ValidationFactory;
+use EllisLab\ExpressionEngine\Service\Validation\Result as ValidationResult;
+use EllisLab\ExpressionEngine\Service\Validation\Rule\Callback as ValidationRuleCallback;
 
 // phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 // phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
@@ -11,6 +17,13 @@ use BuzzingPixel\Cast\Cast\Constants;
 
 class Cast_audio_ft extends EE_Fieldtype
 {
+    /** @var NormalizePaths */
+    private $normalizePaths;
+    /** @var ValidationFactory */
+    private $validationFactory;
+    /** @var PhpInternals */
+    private $phpInternals;
+
     /** @var mixed[] */
     public $info = [
         'name' => Constants::NAME,
@@ -18,31 +31,52 @@ class Cast_audio_ft extends EE_Fieldtype
     ];
 
     public function __construct(
-        ?EE_Loader $eeLoader = null,
-        ?EE_Lang $eeLang = null
+        ?EE_Loader $loader = null,
+        ?EE_Lang $lang = null,
+        ?NormalizePaths $normalizePaths = null,
+        ?ValidationFactory $validationFactory = null,
+        ?PhpInternals $phpInternals = null
     ) {
         // @codeCoverageIgnoreStart
-        if (! $eeLoader) {
-            $eeLoader = ee()->load;
+
+        if (! $loader) {
+            $loader =  Di::diContainer()->get(EE_Loader::class);
         }
 
-        if (! $eeLang) {
-            $eeLang = ee()->lang;
+        if (! $lang) {
+            $lang = Di::diContainer()->get(EE_Lang::class);
         }
+
+        if (! $normalizePaths) {
+            $normalizePaths = Di::diContainer()->get(NormalizePaths::class);
+        }
+
+        if (! $validationFactory) {
+            $validationFactory = Di::diContainer()->get(ValidationFactory::class);
+        }
+
+        if (! $phpInternals) {
+            $phpInternals = Di::diContainer()->get(PhpInternals::class);
+        }
+
         // @codeCoverageIgnoreEnd
+
+        $this->normalizePaths    = $normalizePaths;
+        $this->validationFactory = $validationFactory;
+        $this->phpInternals      = $phpInternals;
 
         $castPath = PATH_THIRD . 'cast/';
 
         /** @var array $packagePaths */
-        $packagePaths = $eeLoader->get_package_paths();
+        $packagePaths = $loader->get_package_paths();
 
         $pathLoaded = in_array($castPath, $packagePaths);
 
         if (! $pathLoaded) {
-            $eeLoader->add_package_path($castPath);
+            $loader->add_package_path($castPath);
         }
 
-        $eeLang->loadfile('cast');
+        $lang->loadfile('cast');
 
         // Run parent constructor
         parent::__construct();
@@ -59,32 +93,32 @@ class Cast_audio_ft extends EE_Fieldtype
     {
         $data = is_array($data) ? $data : [];
 
-        $useFtp = $data['cast_use_ftp'] ?? 'n';
+        $useFtp = $data['cast_audio_use_ftp'] ?? 'n';
 
-        $ftpProtocol = $data['cast_ftp_protocol'] ?? 'ftp';
+        $ftpProtocol = $data['cast_audio_ftp_protocol'] ?? 'ftp';
 
         return [
             'standard_field_options' => [
                 'label' => 'field_options',
-                'group' => 'cast',
+                'group' => 'cast_audio',
                 'settings' => [
-                    'cast_upload_path' => [
+                    'cast_audio_upload_path' => [
                         'title' => 'upload_path',
                         'fields' => [
-                            'cast_upload_path' => [
+                            'cast_audio_upload_path' => [
                                 'type' => 'text',
                                 'required' => true,
-                                'value' => $data['cast_upload_path'] ?? '',
+                                'value' => $data['cast_audio_upload_path'] ?? '',
                             ],
                         ],
                     ],
-                    'cast_upload_url' => [
+                    'cast_audio_upload_url' => [
                         'title' => 'upload_url',
                         'fields' => [
-                            'cast_upload_url' => [
+                            'cast_audio_upload_url' => [
                                 'type' => 'text',
                                 'required' => true,
-                                'value' => $data['cast_upload_url'] ?? '',
+                                'value' => $data['cast_audio_upload_url'] ?? '',
                             ],
                         ],
                     ],
@@ -92,21 +126,21 @@ class Cast_audio_ft extends EE_Fieldtype
             ],
             'ftp_field_options' => [
                 'label' => 'ftp_field_options',
-                'group' => 'cast',
+                'group' => 'cast_audio',
                 'settings' => [
-                    'cast_use_ftp' => [
+                    'cast_audio_use_ftp' => [
                         'title' => 'use_ftp',
                         'fields' => [
-                            'cast_use_ftp' => [
+                            'cast_audio_use_ftp' => [
                                 'type' => 'yes_no',
                                 'value' => $useFtp === 'y' ? 'y' : 'n',
                             ],
                         ],
                     ],
-                    'cast_ftp_protocol' => [
+                    'cast_audio_ftp_protocol' => [
                         'title' => 'protocol',
                         'fields' => [
-                            'cast_ftp_protocol' => [
+                            'cast_audio_ftp_protocol' => [
                                 'type' => 'inline_radio',
                                 'choices' => [
                                     'ftp' => 'FTP',
@@ -116,63 +150,132 @@ class Cast_audio_ft extends EE_Fieldtype
                             ],
                         ],
                     ],
-                    'cast_upload_ftp_server' => [
+                    'cast_audio_upload_ftp_server' => [
                         'title' => 'upload_ftp_server',
                         'fields' => [
-                            'cast_upload_ftp_server' => [
+                            'cast_audio_upload_ftp_server' => [
                                 'type' => 'text',
-                                'value' => $data['cast_upload_ftp_server'] ?? '',
+                                'value' => $data['cast_audio_upload_ftp_server'] ?? '',
                             ],
                         ],
                     ],
-                    'cast_upload_ftp_user_name' => [
+                    'cast_audio_upload_ftp_user_name' => [
                         'title' => 'upload_ftp_user_name',
                         'fields' => [
-                            'cast_upload_ftp_user_name' => [
+                            'cast_audio_upload_ftp_user_name' => [
                                 'type' => 'text',
-                                'value' => $data['cast_upload_ftp_user_name'] ?? '',
+                                'value' => $data['cast_audio_upload_ftp_user_name'] ?? '',
                             ],
                         ],
                     ],
-                    'cast_upload_ftp_password' => [
+                    'cast_audio_upload_ftp_password' => [
                         'title' => 'upload_ftp_password',
                         'fields' => [
-                            'cast_upload_ftp_password' => [
+                            'cast_audio_upload_ftp_password' => [
                                 'type' => 'text',
-                                'value' => $data['cast_upload_ftp_password'] ?? '',
+                                'value' => $data['cast_audio_upload_ftp_password'] ?? '',
                             ],
                         ],
                     ],
-                    'cast_upload_ftp_port' => [
+                    'cast_audio_upload_ftp_port' => [
                         'title' => 'upload_ftp_port',
                         'fields' => [
-                            'cast_upload_ftp_port' => [
+                            'cast_audio_upload_ftp_port' => [
                                 'type' => 'text',
-                                'value' => $data['cast_upload_ftp_port'] ?? '',
+                                'value' => $data['cast_audio_upload_ftp_port'] ?? '',
                             ],
                         ],
                     ],
-                    'cast_upload_ftp_remote_path' => [
+                    'cast_audio_upload_ftp_remote_path' => [
                         'title' => 'upload_ftp_remote_path',
                         'fields' => [
-                            'cast_upload_ftp_remote_path' => [
+                            'cast_audio_upload_ftp_remote_path' => [
                                 'type' => 'text',
-                                'value' => $data['cast_upload_ftp_remote_path'] ?? '',
+                                'value' => $data['cast_audio_upload_ftp_remote_path'] ?? '',
                             ],
                         ],
                     ],
-                    'cast_upload_ftp_remote_url' => [
+                    'cast_audio_upload_ftp_remote_url' => [
                         'title' => 'upload_ftp_remote_url',
                         'fields' => [
-                            'cast_upload_ftp_remote_url' => [
+                            'cast_audio_upload_ftp_remote_url' => [
                                 'type' => 'text',
-                                'value' => $data['cast_upload_ftp_remote_url'] ?? '',
+                                'value' => $data['cast_audio_upload_ftp_remote_url'] ?? '',
                             ],
                         ],
                     ],
                 ],
             ],
         ];
+    }
+
+    /**
+     * @param mixed[]|null $data
+     */
+    public function validate_settings($data) : ValidationResult
+    {
+        $data = is_array($data) ? $data : [];
+
+        $useFtp = $data['cast_audio_use_ftp'] ?? 'n';
+        $useFtp = $useFtp === 'y';
+
+        $validator = $this->validationFactory->make([
+            'cast_audio_upload_path' => 'required|validPath',
+            'cast_audio_upload_url' => 'required',
+            'cast_audio_use_ftp' => 'enum[y,n]',
+            'cast_audio_ftp_protocol' => 'enum[ftp,sftp]',
+            'cast_audio_upload_ftp_server' => 'requiredIfFtp',
+            'cast_audio_upload_ftp_user_name' => 'requiredIfFtp',
+            'cast_audio_upload_ftp_password' => 'requiredIfFtp',
+            'cast_audio_upload_ftp_port' => 'naturalNumberIfFtp',
+            'cast_audio_upload_ftp_remote_url' => 'requiredIfFtp',
+        ]);
+
+        $validator->defineRule('validPath', function ($key, $val, $params, ValidationRuleCallback $rule) {
+            $valid = $this->phpInternals->isDir($this->normalizePaths->normalize($val));
+
+            if (! $valid) {
+                $rule->stop();
+            }
+
+            return $valid ?: 'valid_path_required';
+        });
+
+        $validator->defineRule('requiredIfFtp', static function ($key, $val, $params, ValidationRuleCallback $rule) use ($useFtp) {
+            $invalid = $useFtp && ! $val;
+            $valid   = ! $invalid;
+
+            if (! $valid) {
+                $rule->stop();
+            }
+
+            return $valid ?: 'required';
+        });
+
+        $validator->defineRule('naturalNumberIfFtp', static function ($key, $val, $params, ValidationRuleCallback $rule) use ($useFtp) {
+            $invalid = ($useFtp || $val) && ! ctype_digit($val);
+            $valid   = ! $invalid;
+
+            if (! $valid) {
+                $rule->stop();
+            }
+
+            return $valid ?: 'must_be_positive_integer';
+        });
+
+        return $validator->validate($data);
+    }
+
+    /**
+     * @param mixed[]|null $data
+     *
+     * @return mixed[]
+     */
+    public function save_settings($data) : array
+    {
+        $data = is_array($data) ? $data : [];
+
+        return $data;
     }
 
     // phpcs:enable SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint

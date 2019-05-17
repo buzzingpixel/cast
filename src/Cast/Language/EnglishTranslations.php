@@ -18,5 +18,7 @@ interface EnglishTranslations
         'upload_ftp_port' => 'Upload FTP Port',
         'upload_ftp_remote_path' => 'Upload FTP Remote Path',
         'upload_ftp_remote_url' => 'Upload FTP Remote URL',
+        'valid_path_required' => 'A valid path is required',
+        'must_be_positive_integer' => 'Must be positive integer',
     ];
 }

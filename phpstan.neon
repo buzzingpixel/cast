@@ -3,6 +3,10 @@ parameters:
     bootstrap: %currentWorkingDirectory%/phpstanBootstrap.php
     ignoreErrors:
         - '#Return type \(array\) of method Cast_audio_ft::display_settings\(\) should be compatible with return type \(string\) of method EE_Fieldtype::display_settings\(\)#'
+        - '#Function ee invoked with 1 parameter, 0 required.#'
+        -
+            message: '#Negated boolean expression is always false\.#'
+            path: %currentWorkingDirectory%/src/Cast/Di.php
 
 includes:
     - vendor/phpstan/phpstan-deprecation-rules/rules.neon

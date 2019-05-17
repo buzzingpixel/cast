@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace Tests\ExpressionEngine;
 
 use BuzzingPixel\Cast\Cast\Constants;
+use BuzzingPixel\Cast\Cast\Facade\PhpInternals;
+use BuzzingPixel\Cast\ExpressionEngine\Service\NormalizePaths;
 use Cast_audio_ft;
 use EE_Lang;
 use EE_Loader;
+use EllisLab\ExpressionEngine\Service\Validation\Factory as EEValidationFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Throwable;
+use function sprintf;
 
 class CastAudioFtTest extends TestCase
 {
@@ -38,7 +42,24 @@ class CastAudioFtTest extends TestCase
             ->method('loadfile')
             ->with(self::equalTo('cast'));
 
-        $this->ft = new Cast_audio_ft($eeLoader, $eeLang);
+        /** @var MockObject&NormalizePaths $normalizePaths */
+        $normalizePaths = $this->createMock(NormalizePaths::class);
+
+        $normalizePaths->method('normalize')
+            ->willReturnCallback(static function (string $path) {
+                return sprintf('%s--testNormalize', $path);
+            });
+
+        /** @var MockObject&PhpInternals $phpInternals */
+        $phpInternals = $this->createMock(PhpInternals::class);
+
+        $this->ft = new Cast_audio_ft(
+            $eeLoader,
+            $eeLang,
+            $normalizePaths,
+            new EEValidationFactory(),
+            $phpInternals
+        );
     }
 
     public function testInfoProperty() : void
@@ -58,22 +79,22 @@ class CastAudioFtTest extends TestCase
             [
                 'standard_field_options' => [
                     'label' => 'field_options',
-                    'group' => 'cast',
+                    'group' => 'cast_audio',
                     'settings' => [
-                        'cast_upload_path' => [
+                        'cast_audio_upload_path' => [
                             'title' => 'upload_path',
                             'fields' => [
-                                'cast_upload_path' => [
+                                'cast_audio_upload_path' => [
                                     'type' => 'text',
                                     'required' => true,
                                     'value' => '',
                                 ],
                             ],
                         ],
-                        'cast_upload_url' => [
+                        'cast_audio_upload_url' => [
                             'title' => 'upload_url',
                             'fields' => [
-                                'cast_upload_url' => [
+                                'cast_audio_upload_url' => [
                                     'type' => 'text',
                                     'required' => true,
                                     'value' => '',
@@ -84,21 +105,21 @@ class CastAudioFtTest extends TestCase
                 ],
                 'ftp_field_options' => [
                     'label' => 'ftp_field_options',
-                    'group' => 'cast',
+                    'group' => 'cast_audio',
                     'settings' => [
-                        'cast_use_ftp' => [
+                        'cast_audio_use_ftp' => [
                             'title' => 'use_ftp',
                             'fields' => [
-                                'cast_use_ftp' => [
+                                'cast_audio_use_ftp' => [
                                     'type' => 'yes_no',
                                     'value' => 'n',
                                 ],
                             ],
                         ],
-                        'cast_ftp_protocol' => [
+                        'cast_audio_ftp_protocol' => [
                             'title' => 'protocol',
                             'fields' => [
-                                'cast_ftp_protocol' => [
+                                'cast_audio_ftp_protocol' => [
                                     'type' => 'inline_radio',
                                     'choices' => [
                                         'ftp' => 'FTP',
@@ -108,55 +129,55 @@ class CastAudioFtTest extends TestCase
                                 ],
                             ],
                         ],
-                        'cast_upload_ftp_server' => [
+                        'cast_audio_upload_ftp_server' => [
                             'title' => 'upload_ftp_server',
                             'fields' => [
-                                'cast_upload_ftp_server' => [
+                                'cast_audio_upload_ftp_server' => [
                                     'type' => 'text',
                                     'value' => '',
                                 ],
                             ],
                         ],
-                        'cast_upload_ftp_user_name' => [
+                        'cast_audio_upload_ftp_user_name' => [
                             'title' => 'upload_ftp_user_name',
                             'fields' => [
-                                'cast_upload_ftp_user_name' => [
+                                'cast_audio_upload_ftp_user_name' => [
                                     'type' => 'text',
                                     'value' => '',
                                 ],
                             ],
                         ],
-                        'cast_upload_ftp_password' => [
+                        'cast_audio_upload_ftp_password' => [
                             'title' => 'upload_ftp_password',
                             'fields' => [
-                                'cast_upload_ftp_password' => [
+                                'cast_audio_upload_ftp_password' => [
                                     'type' => 'text',
                                     'value' => '',
                                 ],
                             ],
                         ],
-                        'cast_upload_ftp_port' => [
+                        'cast_audio_upload_ftp_port' => [
                             'title' => 'upload_ftp_port',
                             'fields' => [
-                                'cast_upload_ftp_port' => [
+                                'cast_audio_upload_ftp_port' => [
                                     'type' => 'text',
                                     'value' => '',
                                 ],
                             ],
                         ],
-                        'cast_upload_ftp_remote_path' => [
+                        'cast_audio_upload_ftp_remote_path' => [
                             'title' => 'upload_ftp_remote_path',
                             'fields' => [
-                                'cast_upload_ftp_remote_path' => [
+                                'cast_audio_upload_ftp_remote_path' => [
                                     'type' => 'text',
                                     'value' => '',
                                 ],
                             ],
                         ],
-                        'cast_upload_ftp_remote_url' => [
+                        'cast_audio_upload_ftp_remote_url' => [
                             'title' => 'upload_ftp_remote_url',
                             'fields' => [
-                                'cast_upload_ftp_remote_url' => [
+                                'cast_audio_upload_ftp_remote_url' => [
                                     'type' => 'text',
                                     'value' => '',
                                 ],
@@ -172,41 +193,41 @@ class CastAudioFtTest extends TestCase
     public function testDisplaySettingsWithInputData() : void
     {
         $data = [
-            'cast_upload_path' => 'uploadPathTest',
-            'cast_upload_url' => 'uploadUrlTest',
-            'cast_use_ftp' => 'y',
-            'cast_ftp_protocol' => 'sftp',
-            'cast_upload_ftp_server' => 'uploadFtpServerTest',
-            'cast_upload_ftp_user_name' => 'uploadFtpUserNameTest',
-            'cast_upload_ftp_password' => 'uploadFtpPasswordTest',
-            'cast_upload_ftp_port' => 'uploadFtpPortTest',
-            'cast_upload_ftp_remote_path' => 'uploadFtpRemotePathTest',
-            'cast_upload_ftp_remote_url' => 'uploadFtpRemoteUrlTest',
+            'cast_audio_upload_path' => 'uploadPathTest',
+            'cast_audio_upload_url' => 'uploadUrlTest',
+            'cast_audio_use_ftp' => 'y',
+            'cast_audio_ftp_protocol' => 'sftp',
+            'cast_audio_upload_ftp_server' => 'uploadFtpServerTest',
+            'cast_audio_upload_ftp_user_name' => 'uploadFtpUserNameTest',
+            'cast_audio_upload_ftp_password' => 'uploadFtpPasswordTest',
+            'cast_audio_upload_ftp_port' => 'uploadFtpPortTest',
+            'cast_audio_upload_ftp_remote_path' => 'uploadFtpRemotePathTest',
+            'cast_audio_upload_ftp_remote_url' => 'uploadFtpRemoteUrlTest',
         ];
 
         self::assertEquals(
             [
                 'standard_field_options' => [
                     'label' => 'field_options',
-                    'group' => 'cast',
+                    'group' => 'cast_audio',
                     'settings' => [
-                        'cast_upload_path' => [
+                        'cast_audio_upload_path' => [
                             'title' => 'upload_path',
                             'fields' => [
-                                'cast_upload_path' => [
+                                'cast_audio_upload_path' => [
                                     'type' => 'text',
                                     'required' => true,
-                                    'value' => $data['cast_upload_path'],
+                                    'value' => $data['cast_audio_upload_path'],
                                 ],
                             ],
                         ],
-                        'cast_upload_url' => [
+                        'cast_audio_upload_url' => [
                             'title' => 'upload_url',
                             'fields' => [
-                                'cast_upload_url' => [
+                                'cast_audio_upload_url' => [
                                     'type' => 'text',
                                     'required' => true,
-                                    'value' => $data['cast_upload_url'],
+                                    'value' => $data['cast_audio_upload_url'],
                                 ],
                             ],
                         ],
@@ -214,21 +235,21 @@ class CastAudioFtTest extends TestCase
                 ],
                 'ftp_field_options' => [
                     'label' => 'ftp_field_options',
-                    'group' => 'cast',
+                    'group' => 'cast_audio',
                     'settings' => [
-                        'cast_use_ftp' => [
+                        'cast_audio_use_ftp' => [
                             'title' => 'use_ftp',
                             'fields' => [
-                                'cast_use_ftp' => [
+                                'cast_audio_use_ftp' => [
                                     'type' => 'yes_no',
                                     'value' => 'y',
                                 ],
                             ],
                         ],
-                        'cast_ftp_protocol' => [
+                        'cast_audio_ftp_protocol' => [
                             'title' => 'protocol',
                             'fields' => [
-                                'cast_ftp_protocol' => [
+                                'cast_audio_ftp_protocol' => [
                                     'type' => 'inline_radio',
                                     'choices' => [
                                         'ftp' => 'FTP',
@@ -238,57 +259,57 @@ class CastAudioFtTest extends TestCase
                                 ],
                             ],
                         ],
-                        'cast_upload_ftp_server' => [
+                        'cast_audio_upload_ftp_server' => [
                             'title' => 'upload_ftp_server',
                             'fields' => [
-                                'cast_upload_ftp_server' => [
+                                'cast_audio_upload_ftp_server' => [
                                     'type' => 'text',
-                                    'value' => $data['cast_upload_ftp_server'],
+                                    'value' => $data['cast_audio_upload_ftp_server'],
                                 ],
                             ],
                         ],
-                        'cast_upload_ftp_user_name' => [
+                        'cast_audio_upload_ftp_user_name' => [
                             'title' => 'upload_ftp_user_name',
                             'fields' => [
-                                'cast_upload_ftp_user_name' => [
+                                'cast_audio_upload_ftp_user_name' => [
                                     'type' => 'text',
-                                    'value' => $data['cast_upload_ftp_user_name'],
+                                    'value' => $data['cast_audio_upload_ftp_user_name'],
                                 ],
                             ],
                         ],
-                        'cast_upload_ftp_password' => [
+                        'cast_audio_upload_ftp_password' => [
                             'title' => 'upload_ftp_password',
                             'fields' => [
-                                'cast_upload_ftp_password' => [
+                                'cast_audio_upload_ftp_password' => [
                                     'type' => 'text',
-                                    'value' => $data['cast_upload_ftp_password'],
+                                    'value' => $data['cast_audio_upload_ftp_password'],
                                 ],
                             ],
                         ],
-                        'cast_upload_ftp_port' => [
+                        'cast_audio_upload_ftp_port' => [
                             'title' => 'upload_ftp_port',
                             'fields' => [
-                                'cast_upload_ftp_port' => [
+                                'cast_audio_upload_ftp_port' => [
                                     'type' => 'text',
-                                    'value' => $data['cast_upload_ftp_port'],
+                                    'value' => $data['cast_audio_upload_ftp_port'],
                                 ],
                             ],
                         ],
-                        'cast_upload_ftp_remote_path' => [
+                        'cast_audio_upload_ftp_remote_path' => [
                             'title' => 'upload_ftp_remote_path',
                             'fields' => [
-                                'cast_upload_ftp_remote_path' => [
+                                'cast_audio_upload_ftp_remote_path' => [
                                     'type' => 'text',
-                                    'value' => $data['cast_upload_ftp_remote_path'],
+                                    'value' => $data['cast_audio_upload_ftp_remote_path'],
                                 ],
                             ],
                         ],
-                        'cast_upload_ftp_remote_url' => [
+                        'cast_audio_upload_ftp_remote_url' => [
                             'title' => 'upload_ftp_remote_url',
                             'fields' => [
-                                'cast_upload_ftp_remote_url' => [
+                                'cast_audio_upload_ftp_remote_url' => [
                                     'type' => 'text',
-                                    'value' => $data['cast_upload_ftp_remote_url'],
+                                    'value' => $data['cast_audio_upload_ftp_remote_url'],
                                 ],
                             ],
                         ],

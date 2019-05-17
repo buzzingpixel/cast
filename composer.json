@@ -11,7 +11,8 @@
         }
     ],
     "require": {
-        "php": "^7.1"
+        "php": "^7.1",
+        "php-di/php-di": "^6.0"
     },
     "require-dev": {
         "codedungeon/phpunit-result-printer": "^0.26.2",
@@ -40,7 +41,12 @@
         "classmap": [
             "work/testing/ee3/system/ee/legacy/fieldtypes/EE_Fieldtype.php",
             "work/testing/ee3/system/ee/legacy/core/Loader.php",
-            "work/testing/ee3/system/ee/legacy/core/Lang.php"
+            "work/testing/ee3/system/ee/legacy/core/Lang.php",
+            "work/testing/ee3/system/ee/legacy/core/Config.php",
+            "work/testing/ee3/system/ee/EllisLab/ExpressionEngine/Service/Validation/Rule/Callback.php",
+            "work/testing/ee3/system/ee/EllisLab/ExpressionEngine/Service/Validation/Factory.php",
+            "work/testing/ee3/system/ee/EllisLab/ExpressionEngine/Service/Validation/ValidationRule.php",
+            "work/testing/ee3/system/ee/EllisLab/ExpressionEngine/Service/Validation/Result.php"
         ]
     },
     "config": {
