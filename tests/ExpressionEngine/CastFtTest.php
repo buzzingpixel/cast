@@ -6,16 +6,39 @@ namespace Tests\ExpressionEngine;
 
 use BuzzingPixel\Cast\Cast\Constants;
 use Cast_ft;
+use EE_Lang;
+use EE_Loader;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Throwable;
 
 class CastFtTest extends TestCase
 {
     /** @var Cast_ft */
     private $ft;
 
+    /**
+     * @throws Throwable
+     */
     public function setUp() : void
     {
-        $this->ft = new Cast_ft();
+        /** @var MockObject&EE_Loader $eeLoader */
+        $eeLoader = $this->createMock(EE_Loader::class);
+
+        $eeLoader->method('get_package_paths')->willReturn([]);
+
+        $eeLoader->expects(self::once())
+            ->method('add_package_path')
+            ->with(self::equalTo('pathThirdTestcast/'));
+
+        /** @var MockObject&EE_Lang $eeLang */
+        $eeLang = $this->createMock(EE_Lang::class);
+
+        $eeLang->expects(self::once())
+            ->method('loadfile')
+            ->with(self::equalTo('cast'));
+
+        $this->ft = new Cast_ft($eeLoader, $eeLang);
     }
 
     public function testInfoProperty() : void

@@ -17,6 +17,37 @@ class Cast_ft extends EE_Fieldtype
         'version' => Constants::VERSION,
     ];
 
+    public function __construct(
+        ?EE_Loader $eeLoader = null,
+        ?EE_Lang $eeLang = null
+    ) {
+        // @codeCoverageIgnoreStart
+        if (! $eeLoader) {
+            $eeLoader = ee()->load;
+        }
+
+        if (! $eeLang) {
+            $eeLang = ee()->lang;
+        }
+        // @codeCoverageIgnoreEnd
+
+        $castPath = PATH_THIRD . 'cast/';
+
+        /** @var array $packagePaths */
+        $packagePaths = $eeLoader->get_package_paths();
+
+        $pathLoaded = in_array($castPath, $packagePaths);
+
+        if (! $pathLoaded) {
+            $eeLoader->add_package_path($castPath);
+        }
+
+        $eeLang->loadfile('cast');
+
+        // Run parent constructor
+        parent::__construct();
+    }
+
     // phpcs:disable SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint
 
     /**
@@ -49,7 +80,6 @@ class Cast_ft extends EE_Fieldtype
                     ],
                     'cast_upload_url' => [
                         'title' => 'upload_url',
-                        'desc' => 'upload_url_explain',
                         'fields' => [
                             'cast_upload_url' => [
                                 'type' => 'text',
@@ -97,7 +127,6 @@ class Cast_ft extends EE_Fieldtype
                     ],
                     'cast_upload_ftp_user_name' => [
                         'title' => 'upload_ftp_user_name',
-                        'desc' => 'upload_ftp_user_name_explain',
                         'fields' => [
                             'cast_upload_ftp_user_name' => [
                                 'type' => 'text',
@@ -107,7 +136,6 @@ class Cast_ft extends EE_Fieldtype
                     ],
                     'cast_upload_ftp_password' => [
                         'title' => 'upload_ftp_password',
-                        'desc' => 'upload_ftp_password_explain',
                         'fields' => [
                             'cast_upload_ftp_password' => [
                                 'type' => 'text',
@@ -117,7 +145,6 @@ class Cast_ft extends EE_Fieldtype
                     ],
                     'cast_upload_ftp_port' => [
                         'title' => 'upload_ftp_port',
-                        'desc' => 'upload_ftp_port_explain',
                         'fields' => [
                             'cast_upload_ftp_port' => [
                                 'type' => 'text',
@@ -127,7 +154,6 @@ class Cast_ft extends EE_Fieldtype
                     ],
                     'cast_upload_ftp_remote_path' => [
                         'title' => 'upload_ftp_remote_path',
-                        'desc' => 'upload_ftp_remote_path_explain',
                         'fields' => [
                             'cast_upload_ftp_remote_path' => [
                                 'type' => 'text',
@@ -137,7 +163,6 @@ class Cast_ft extends EE_Fieldtype
                     ],
                     'cast_upload_ftp_remote_url' => [
                         'title' => 'upload_ftp_remote_url',
-                        'desc' => 'upload_ftp_remote_url_explain',
                         'fields' => [
                             'cast_upload_ftp_remote_url' => [
                                 'type' => 'text',

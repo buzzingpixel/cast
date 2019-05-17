@@ -13,4 +13,6 @@ define('BASEPATH', TESTING_APP_PATH);
 
 define('APP_BASE_PATH', TESTING_APP_PATH);
 
+define('PATH_THIRD', 'pathThirdTest');
+
 require dirname(__DIR__) . '/vendor/autoload.php';
