@@ -29,7 +29,8 @@
             "BuzzingPixel\\Cast\\": "src"
         },
         "classmap": [
-            "src/ExpressionEngine/ft.cast.php"
+            "src/ExpressionEngine/ft.cast_audio.php",
+            "src/ExpressionEngine/pi.cast.php"
         ]
     },
     "autoload-dev": {

@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace Tests\ExpressionEngine;
 
 use BuzzingPixel\Cast\Cast\Constants;
-use Cast_ft;
+use Cast_audio_ft;
 use EE_Lang;
 use EE_Loader;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Throwable;
 
-class CastFtTest extends TestCase
+class CastAudioFtTest extends TestCase
 {
-    /** @var Cast_ft */
+    /** @var Cast_audio_ft */
     private $ft;
 
     /**
@@ -38,7 +38,7 @@ class CastFtTest extends TestCase
             ->method('loadfile')
             ->with(self::equalTo('cast'));
 
-        $this->ft = new Cast_ft($eeLoader, $eeLang);
+        $this->ft = new Cast_audio_ft($eeLoader, $eeLang);
     }
 
     public function testInfoProperty() : void

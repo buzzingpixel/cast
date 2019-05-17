@@ -9,7 +9,7 @@ use BuzzingPixel\Cast\Cast\Constants;
 // phpcs:disable Squiz.Classes.ClassFileName.NoMatch
 // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
 
-class Cast_ft extends EE_Fieldtype
+class Cast_audio_ft extends EE_Fieldtype
 {
     /** @var mixed[] */
     public $info = [

@@ -11,4 +11,10 @@ return [
     'name' => Constants::NAME,
     'namespace' => '\\',
     'version' => Constants::VERSION,
+    'fieldtypes' => [
+        'cast_audio' => [
+            'name' => 'Cast Audio',
+            'compatibility' => 'cast_audio',
+        ],
+    ],
 ];
