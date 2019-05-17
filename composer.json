@@ -37,7 +37,9 @@
             "Tests\\": "tests"
         },
         "classmap": [
-            "work/testing/ee3/system/ee/legacy/fieldtypes/EE_Fieldtype.php"
+            "work/testing/ee3/system/ee/legacy/fieldtypes/EE_Fieldtype.php",
+            "work/testing/ee3/system/ee/legacy/core/Loader.php",
+            "work/testing/ee3/system/ee/legacy/core/Lang.php"
         ]
     },
     "config": {
