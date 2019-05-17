@@ -1,6 +1,8 @@
 parameters:
     level: max
     bootstrap: %currentWorkingDirectory%/phpstanBootstrap.php
+    ignoreErrors:
+        - '#Return type \(array\) of method Cast_ft::display_settings\(\) should be compatible with return type \(string\) of method EE_Fieldtype::display_settings\(\)#'
 
 includes:
     - vendor/phpstan/phpstan-deprecation-rules/rules.neon
