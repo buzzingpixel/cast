@@ -5,6 +5,7 @@ declare(strict_types=1);
 use BuzzingPixel\Cast\Cast\Constants;
 use BuzzingPixel\Cast\Cast\Di;
 use BuzzingPixel\Cast\Cast\Facade\PhpInternals;
+use BuzzingPixel\Cast\Cast\Templating\TemplatingService;
 use BuzzingPixel\Cast\ExpressionEngine\Service\NormalizePaths;
 use EllisLab\ExpressionEngine\Service\Validation\Factory as ValidationFactory;
 use EllisLab\ExpressionEngine\Service\Validation\Result as ValidationResult;
@@ -23,6 +24,8 @@ class Cast_audio_ft extends EE_Fieldtype
     private $validationFactory;
     /** @var PhpInternals */
     private $phpInternals;
+    /** @var TemplatingService */
+    private $templatingService;
 
     /** @var mixed[] */
     public $info = [
@@ -35,7 +38,8 @@ class Cast_audio_ft extends EE_Fieldtype
         ?EE_Lang $lang = null,
         ?NormalizePaths $normalizePaths = null,
         ?ValidationFactory $validationFactory = null,
-        ?PhpInternals $phpInternals = null
+        ?PhpInternals $phpInternals = null,
+        ?TemplatingService $templatingService = null
     ) {
         // @codeCoverageIgnoreStart
 
@@ -57,6 +61,10 @@ class Cast_audio_ft extends EE_Fieldtype
 
         if (! $phpInternals) {
             $phpInternals = Di::diContainer()->get(PhpInternals::class);
+        }
+
+        if (! $templatingService) {
+            $this->templatingService = Di::diContainer()->get(TemplatingService::class);
         }
 
         // @codeCoverageIgnoreEnd
@@ -289,7 +297,6 @@ class Cast_audio_ft extends EE_Fieldtype
      */
     public function display_field($data) : string
     {
-        // TODO: Implement display_field() method.
-        return 'TODO: Implement display_field() method.';
+        return $this->templatingService->render('CastAudioField');
     }
 }

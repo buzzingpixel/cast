@@ -15,6 +15,8 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Throwable;
 use function is_array;
+use function ob_get_clean;
+use function ob_start;
 use function sprintf;
 
 class CastAudioFtTest extends TestCase
@@ -321,14 +323,6 @@ class CastAudioFtTest extends TestCase
         );
     }
 
-    public function testDisplayField() : void
-    {
-        self::assertSame(
-            'TODO: Implement display_field() method.',
-            $this->ft->display_field('')
-        );
-    }
-
     public function testSaveSettings() : void
     {
         $data = $this->ft->save_settings(null);
@@ -339,5 +333,30 @@ class CastAudioFtTest extends TestCase
             ['test1' => 'test1'],
             $this->ft->save_settings(['test1' => 'test1'])
         );
+    }
+
+    public function testDisplayField() : void
+    {
+        ob_start();
+
+        include TESTING_APP_PATH . '/src/Templates/CastAudioField.php';
+
+        $output = ob_get_clean();
+
+        // Test having output in the buffer
+        ob_start();
+
+        $echoContent = 'testing output';
+
+        echo $echoContent;
+
+        self::assertSame(
+            $output,
+            $this->ft->display_field('')
+        );
+
+        $oldContent = ob_get_clean();
+
+        self::assertEquals($oldContent, $echoContent);
     }
 }
