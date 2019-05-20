@@ -49,16 +49,28 @@ class Di
     {
         return [
             EE_Config::class => static function () {
+                // @codeCoverageIgnoreStart
                 return ee()->config;
+
+                // @codeCoverageIgnoreEnd
             },
             EE_Lang::class => static function () {
+                // @codeCoverageIgnoreStart
                 return ee()->lang;
+
+                // @codeCoverageIgnoreEnd
             },
             EE_Loader::class => static function () {
+                // @codeCoverageIgnoreStart
                 return ee()->load;
+
+                // @codeCoverageIgnoreEnd
             },
             EEValidationFactory::class => static function () {
+                // @codeCoverageIgnoreStart
                 return ee('Validation');
+
+                // @codeCoverageIgnoreEnd
             },
         ];
     }
