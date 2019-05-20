@@ -14,6 +14,7 @@ use EllisLab\ExpressionEngine\Service\Validation\Factory as EEValidationFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Throwable;
+use function is_array;
 use function sprintf;
 
 class CastAudioFtTest extends TestCase
@@ -325,6 +326,18 @@ class CastAudioFtTest extends TestCase
         self::assertSame(
             'TODO: Implement display_field() method.',
             $this->ft->display_field('')
+        );
+    }
+
+    public function testSaveSettings() : void
+    {
+        $data = $this->ft->save_settings(null);
+
+        self::assertTrue(is_array($data));
+
+        self::assertSame(
+            ['test1' => 'test1'],
+            $this->ft->save_settings(['test1' => 'test1'])
         );
     }
 }

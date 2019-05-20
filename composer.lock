@@ -2360,16 +2360,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.11.6",
+            "version": "0.11.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "7af8b9d02b3ab36444dbf4e1b9ca1c1bd5044d81"
+                "reference": "32d87d746c70785f78d239855782d27cde0eb6ee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/7af8b9d02b3ab36444dbf4e1b9ca1c1bd5044d81",
-                "reference": "7af8b9d02b3ab36444dbf4e1b9ca1c1bd5044d81",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/32d87d746c70785f78d239855782d27cde0eb6ee",
+                "reference": "32d87d746c70785f78d239855782d27cde0eb6ee",
                 "shasum": ""
             },
             "require": {
@@ -2378,6 +2378,7 @@
                 "nette/bootstrap": "^2.4 || ^3.0",
                 "nette/di": "^2.4.7 || ^3.0",
                 "nette/robot-loader": "^3.0.1",
+                "nette/schema": "^1.0",
                 "nette/utils": "^2.4.5 || ^3.0",
                 "nikic/php-parser": "^4.0.2",
                 "php": "~7.1",
@@ -2429,26 +2430,26 @@
                 "MIT"
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
-            "time": "2019-05-08T16:33:56+00:00"
+            "time": "2019-05-19T17:36:42+00:00"
         },
         {
             "name": "phpstan/phpstan-deprecation-rules",
-            "version": "0.11",
+            "version": "0.11.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-deprecation-rules.git",
-                "reference": "449fee6223220b337760abca4444801ddcc8b38d"
+                "reference": "4991f7599646f97f7a2fc2b74ead018f2104ac8e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-deprecation-rules/zipball/449fee6223220b337760abca4444801ddcc8b38d",
-                "reference": "449fee6223220b337760abca4444801ddcc8b38d",
+                "url": "https://api.github.com/repos/phpstan/phpstan-deprecation-rules/zipball/4991f7599646f97f7a2fc2b74ead018f2104ac8e",
+                "reference": "4991f7599646f97f7a2fc2b74ead018f2104ac8e",
                 "shasum": ""
             },
             "require": {
                 "nikic/php-parser": "^4.0",
                 "php": "~7.1",
-                "phpstan/phpstan": "^0.11"
+                "phpstan/phpstan": "^0.11.4"
             },
             "require-dev": {
                 "consistence/coding-standard": "^3.0.1",
@@ -2459,10 +2460,15 @@
                 "phpunit/phpunit": "^7.0",
                 "slevomat/coding-standard": "^4.5.2"
             },
-            "type": "library",
+            "type": "phpstan-extension",
             "extra": {
                 "branch-alias": {
                     "dev-master": "0.11-dev"
+                },
+                "phpstan": {
+                    "includes": [
+                        "rules.neon"
+                    ]
                 }
             },
             "autoload": {
@@ -2475,7 +2481,7 @@
                 "MIT"
             ],
             "description": "PHPStan rules for detecting usage of deprecated classes, methods, properties, constants and traits.",
-            "time": "2018-12-05T18:04:16+00:00"
+            "time": "2019-05-19T19:55:34+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",

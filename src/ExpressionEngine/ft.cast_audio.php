@@ -214,6 +214,8 @@ class Cast_audio_ft extends EE_Fieldtype
      */
     public function validate_settings($data) : ValidationResult
     {
+        // Ugh, apparently EE's validator can't be tested
+        // @codeCoverageIgnoreStart
         $data = is_array($data) ? $data : [];
 
         $useFtp = $data['cast_audio_use_ftp'] ?? 'n';
@@ -264,6 +266,8 @@ class Cast_audio_ft extends EE_Fieldtype
         });
 
         return $validator->validate($data);
+
+        // @codeCoverageIgnoreEnd
     }
 
     /**
