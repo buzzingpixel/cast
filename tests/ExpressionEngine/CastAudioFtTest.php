@@ -349,7 +349,10 @@ class CastAudioFtTest extends TestCase
     {
         $templatingService = Di::diContainer()->get(TemplatingService::class);
 
-        $output = $templatingService->render('CastAudioField');
+        $output = $templatingService->render('CastAudioField', [
+            'csrfTokenName' => 'csrf_token',
+            'csrfToken' => CSRF_TOKEN,
+        ]);
 
         // Test having output in the buffer
         ob_start();

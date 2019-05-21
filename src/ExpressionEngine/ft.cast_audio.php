@@ -310,7 +310,10 @@ class Cast_audio_ft extends EE_Fieldtype
     {
         $this->setCpCssAndJs();
 
-        return $this->templatingService->render('CastAudioField');
+        return $this->templatingService->render('CastAudioField', [
+            'csrfTokenName' => 'csrf_token',
+            'csrfToken' => defined('CSRF_TOKEN') ? CSRF_TOKEN : '',
+        ]);
     }
 
     private function setCpCssAndJs() : void

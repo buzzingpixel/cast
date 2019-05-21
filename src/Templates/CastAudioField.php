@@ -9,6 +9,8 @@ use BuzzingPixel\Cast\Cast\Templating\TemplatingService;
 // phpcs:disable Generic.Files.InlineHTML.Found
 
 /** @var TemplatingService $t */
+/** @var string $csrfTokenName */
+/** @var string $csrfToken */
 
 $translator = Di::diContainer()->get(Translator::class);
 ?>
@@ -16,8 +18,8 @@ $translator = Di::diContainer()->get(Translator::class);
 <div
     ref="CastAudioField"
     data-audio-file-name=""
-    data-csrf-token-name=""
-    data-csrf-token=""
+    data-csrf-token-name="<?=$csrfTokenName?>"
+    data-csrf-token="<?=$csrfToken?>"
     data-upload-key=""
     data-upload-url=""
     @drag="preventDefault"
