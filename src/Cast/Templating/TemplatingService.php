@@ -47,6 +47,9 @@ class TemplatingService
 
         extract($vars);
 
+        /** @noinspection PhpUnusedLocalVariableInspection */
+        $templatingService = $t = $this;
+
         /** @noinspection PhpIncludeInspection */
         include $this->baseTemplateDir . $path . '.php';
 
