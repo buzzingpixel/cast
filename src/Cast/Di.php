@@ -6,6 +6,8 @@ declare(strict_types=1);
 
 namespace BuzzingPixel\Cast\Cast;
 
+use BuzzingPixel\Cast\Cast\Language\EnglishTranslations;
+use BuzzingPixel\Cast\Cast\Language\Translator;
 use Cp;
 use DI\ContainerBuilder;
 use EE_Config;
@@ -87,6 +89,10 @@ class Di
                 return ee('Validation');
 
                 // @codeCoverageIgnoreEnd
+            },
+            Translator::class => static function () {
+                // TODO: determine what system this is (Craft/EE), then determine lang, then get appropriate translation
+                return new Translator(new EnglishTranslations());
             },
         ];
     }
