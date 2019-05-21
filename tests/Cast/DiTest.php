@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Cast\Cast;
+namespace Tests\Cast;
 
 use BuzzingPixel\Cast\Cast\Di;
 use PHPUnit\Framework\TestCase;

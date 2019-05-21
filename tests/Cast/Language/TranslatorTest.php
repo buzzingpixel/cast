@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Cast\Cast\Language;
+namespace Tests\Cast\Language;
 
 use BuzzingPixel\Cast\Cast\Language\EnglishTranslations;
 use BuzzingPixel\Cast\Cast\Language\Translator;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Cast\Cast\Facade;
+namespace Tests\Cast\Facade;
 
 use BuzzingPixel\Cast\Cast\Facade\PhpInternals;
 use PHPUnit\Framework\TestCase;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Cast\ExpressionEngine\Migration;
+namespace Tests\ExpressionEngine\Migration;
 
 use BuzzingPixel\Cast\ExpressionEngine\Factory\QueryBuilderFactory;
 use BuzzingPixel\Cast\ExpressionEngine\Migration\M000001AddModule;

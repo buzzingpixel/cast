@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Cast\ExpressionEngine\Service;
+namespace Tests\ExpressionEngine\Service;
 
 use BuzzingPixel\Cast\ExpressionEngine\Service\NormalizePaths;
 use EE_Config;
