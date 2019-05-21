@@ -8,6 +8,7 @@ namespace BuzzingPixel\Cast\Cast;
 
 use BuzzingPixel\Cast\Cast\Language\EnglishTranslations;
 use BuzzingPixel\Cast\Cast\Language\Translator;
+use CI_DB_forge;
 use Cp;
 use DI\ContainerBuilder;
 use EE_Config;
@@ -50,50 +51,38 @@ class Di
      */
     private static function definitions() : array
     {
+        // @codeCoverageIgnoreStart
         return [
-            Cp::class => static function () {
-                // @codeCoverageIgnoreStart
+            CI_DB_forge::class => static function () {
+                ee()->load->dbforge();
 
+                return ee()->dbforge;
+            },
+            Cp::class => static function () {
                 if (! isset(ee()->cp)) {
                     return null;
                 }
 
                 return ee()->cp;
-
-                // @codeCoverageIgnoreEnd
             },
             EE_Config::class => static function () {
-                // @codeCoverageIgnoreStart
-
                 return ee()->config;
-
-                // @codeCoverageIgnoreEnd
             },
             EE_Lang::class => static function () {
-                // @codeCoverageIgnoreStart
-
                 return ee()->lang;
-
-                // @codeCoverageIgnoreEnd
             },
             EE_Loader::class => static function () {
-                // @codeCoverageIgnoreStart
-
                 return ee()->load;
-
-                // @codeCoverageIgnoreEnd
             },
             EEValidationFactory::class => static function () {
-                // @codeCoverageIgnoreStart
-
                 return ee('Validation');
-
-                // @codeCoverageIgnoreEnd
             },
             Translator::class => static function () {
                 // TODO: determine what system this is (Craft/EE), then determine lang, then get appropriate translation
                 return new Translator(new EnglishTranslations());
             },
         ];
+
+        // @codeCoverageIgnoreEnd
     }
 }

@@ -20,6 +20,7 @@
             <directory suffix=".php">src</directory>
             <exclude>
                 <directory>src/Templates</directory>
+                <directory>src/ExpressionEngine/Factory</directory>
             </exclude>
         </whitelist>
     </filter>

@@ -5,6 +5,7 @@ declare(strict_types=1);
 define('PATH_THIRD', 'pathThirdTest');
 define('PATH_THIRD_THEMES', 'pathThirdThemesTest');
 define('URL_THIRD_THEMES', 'urlThirdThemesTest');
+define('BASEPATH', __DIR__ . '/work/testing/ee3/system/ee/legacy/');
 
 /**
  * @return mixed

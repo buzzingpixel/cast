@@ -31,7 +31,9 @@
         },
         "classmap": [
             "src/ExpressionEngine/ft.cast_audio.php",
-            "src/ExpressionEngine/pi.cast.php"
+            "src/ExpressionEngine/mcp.cast.php",
+            "src/ExpressionEngine/mod.cast.php",
+            "src/ExpressionEngine/upd.cast.php"
         ]
     },
     "autoload-dev": {
@@ -48,7 +50,10 @@
             "work/testing/ee3/system/ee/EllisLab/ExpressionEngine/Service/Validation/ValidationRule.php",
             "work/testing/ee3/system/ee/EllisLab/ExpressionEngine/Service/Validation/Result.php",
             "work/testing/ee3/system/ee/EllisLab/ExpressionEngine/Service/Validation/Validator.php",
-            "work/testing/ee3/system/ee/legacy/libraries/Cp.php"
+            "work/testing/ee3/system/ee/legacy/libraries/Cp.php",
+            "work/testing/ee3/system/ee/legacy/database/DB_forge.php",
+            "work/testing/ee3/system/ee/EllisLab/ExpressionEngine/Service/Database/Query.php",
+            "work/testing/ee3/system/ee/legacy/database/drivers/mysqli/mysqli_driver.php"
         ]
     },
     "config": {

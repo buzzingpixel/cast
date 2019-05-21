@@ -9,7 +9,7 @@ error_reporting(-1);
 define('TESTS_BASE_PATH', __DIR__);
 
 define('TESTING_APP_PATH', dirname(__DIR__));
-define('BASEPATH', TESTING_APP_PATH);
+define('BASEPATH', TESTING_APP_PATH . '/work/testing/ee3/system/ee/legacy/');
 
 define('APP_BASE_PATH', TESTING_APP_PATH);
 
