@@ -1,5 +1,5 @@
 {
-    "assets": "themes",
+    "assets": "themes/cast",
     "enableESLint": true,
     "enableJSCS": false,
     "enableJSHint": false,

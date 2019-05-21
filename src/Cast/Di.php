@@ -6,6 +6,7 @@ declare(strict_types=1);
 
 namespace BuzzingPixel\Cast\Cast;
 
+use Cp;
 use DI\ContainerBuilder;
 use EE_Config;
 use EE_Lang;
@@ -48,26 +49,41 @@ class Di
     private static function definitions() : array
     {
         return [
+            Cp::class => static function () {
+                // @codeCoverageIgnoreStart
+
+                if (! isset(ee()->cp)) {
+                    return null;
+                }
+
+                return ee()->cp;
+
+                // @codeCoverageIgnoreEnd
+            },
             EE_Config::class => static function () {
                 // @codeCoverageIgnoreStart
+
                 return ee()->config;
 
                 // @codeCoverageIgnoreEnd
             },
             EE_Lang::class => static function () {
                 // @codeCoverageIgnoreStart
+
                 return ee()->lang;
 
                 // @codeCoverageIgnoreEnd
             },
             EE_Loader::class => static function () {
                 // @codeCoverageIgnoreStart
+
                 return ee()->load;
 
                 // @codeCoverageIgnoreEnd
             },
             EEValidationFactory::class => static function () {
                 // @codeCoverageIgnoreStart
+
                 return ee('Validation');
 
                 // @codeCoverageIgnoreEnd

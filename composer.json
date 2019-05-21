@@ -47,7 +47,8 @@
             "work/testing/ee3/system/ee/EllisLab/ExpressionEngine/Service/Validation/Factory.php",
             "work/testing/ee3/system/ee/EllisLab/ExpressionEngine/Service/Validation/ValidationRule.php",
             "work/testing/ee3/system/ee/EllisLab/ExpressionEngine/Service/Validation/Result.php",
-            "work/testing/ee3/system/ee/EllisLab/ExpressionEngine/Service/Validation/Validator.php"
+            "work/testing/ee3/system/ee/EllisLab/ExpressionEngine/Service/Validation/Validator.php",
+            "work/testing/ee3/system/ee/legacy/libraries/Cp.php"
         ]
     },
     "config": {

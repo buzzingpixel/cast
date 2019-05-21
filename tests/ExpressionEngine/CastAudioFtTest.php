@@ -8,12 +8,14 @@ use BuzzingPixel\Cast\Cast\Constants;
 use BuzzingPixel\Cast\Cast\Facade\PhpInternals;
 use BuzzingPixel\Cast\ExpressionEngine\Service\NormalizePaths;
 use Cast_audio_ft;
+use Cp;
 use EE_Lang;
 use EE_Loader;
 use EllisLab\ExpressionEngine\Service\Validation\Factory as EEValidationFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Throwable;
+use function filemtime;
 use function is_array;
 use function ob_get_clean;
 use function ob_start;
@@ -23,6 +25,9 @@ class CastAudioFtTest extends TestCase
 {
     /** @var Cast_audio_ft */
     private $ft;
+
+    /** @var MockObject&Cp */
+    private $eeCp;
 
     /**
      * @throws Throwable
@@ -40,6 +45,8 @@ class CastAudioFtTest extends TestCase
 
         /** @var MockObject&EE_Lang $eeLang */
         $eeLang = $this->createMock(EE_Lang::class);
+
+        $this->eeCp = $this->createMock(Cp::class);
 
         $eeLang->expects(self::once())
             ->method('loadfile')
@@ -59,6 +66,7 @@ class CastAudioFtTest extends TestCase
         $this->ft = new Cast_audio_ft(
             $eeLoader,
             $eeLang,
+            $this->eeCp,
             $normalizePaths,
             new EEValidationFactory(),
             $phpInternals
@@ -349,6 +357,24 @@ class CastAudioFtTest extends TestCase
         $echoContent = 'testing output';
 
         echo $echoContent;
+
+        $cssFileTime = filemtime(PATH_THIRD_THEMES . 'cast/css/style.min.css');
+
+        $this->eeCp->expects(self::once())
+            ->method('add_to_head')
+            ->with(
+                self::equalTo(
+                    '<link rel="stylesheet" href="https://test.com/themes/cast/css/style.min.css?v=' . $cssFileTime . '">'
+                )
+            );
+
+        $this->eeCp->expects(self::once())
+            ->method('add_to_foot')
+            ->with(
+                self::equalTo(
+                    '<script type="module" src="https://test.com/themes/cast/js/main.js?v=' . $cssFileTime . '"></script>'
+                )
+            );
 
         self::assertSame(
             $output,

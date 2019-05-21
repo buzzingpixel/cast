@@ -18,6 +18,8 @@ use EllisLab\ExpressionEngine\Service\Validation\Rule\Callback as ValidationRule
 
 class Cast_audio_ft extends EE_Fieldtype
 {
+    /** @var Cp|null */
+    private $eeCp;
     /** @var NormalizePaths */
     private $normalizePaths;
     /** @var ValidationFactory */
@@ -36,6 +38,7 @@ class Cast_audio_ft extends EE_Fieldtype
     public function __construct(
         ?EE_Loader $loader = null,
         ?EE_Lang $lang = null,
+        ?Cp $eeCp = null,
         ?NormalizePaths $normalizePaths = null,
         ?ValidationFactory $validationFactory = null,
         ?PhpInternals $phpInternals = null,
@@ -49,6 +52,14 @@ class Cast_audio_ft extends EE_Fieldtype
 
         if (! $lang) {
             $lang = Di::diContainer()->get(EE_Lang::class);
+        }
+
+        if ($eeCp) {
+            $this->eeCp = $eeCp;
+        }
+
+        if (! $eeCp && isset(ee()->cp)) {
+            $this->eeCp = ee()->cp;
         }
 
         if (! $normalizePaths) {
@@ -297,6 +308,68 @@ class Cast_audio_ft extends EE_Fieldtype
      */
     public function display_field($data) : string
     {
+        $this->setCpCssAndJs();
+
         return $this->templatingService->render('CastAudioField');
+    }
+
+    private function setCpCssAndJs() : void
+    {
+        $this->setCpCss();
+        $this->setCpJs();
+    }
+
+    private function setCpCss() : void
+    {
+        // @codeCoverageIgnoreStart
+
+        if (! $this->eeCp) {
+            return;
+        }
+
+        // @codeCoverageIgnoreEnd
+
+        $cssFileTime = uniqid();
+
+        $cssPath = PATH_THIRD_THEMES . 'cast/css/style.min.css';
+
+        if (is_file($cssPath)) {
+            $cssFileTime = filemtime($cssPath);
+        }
+
+        $css = URL_THIRD_THEMES;
+
+        $css .= 'cast/css/style.min.css?v=' . $cssFileTime;
+
+        $cssTag = '<link rel="stylesheet" href="' . $css . '">';
+
+        $this->eeCp->add_to_head($cssTag);
+    }
+
+    private function setCpJs() : void
+    {
+        // @codeCoverageIgnoreStart
+
+        if (! $this->eeCp) {
+            return;
+        }
+
+        // @codeCoverageIgnoreEnd
+
+        $jsFileTime = uniqid();
+
+        $jsPath = PATH_THIRD_THEMES . 'cast/js/main.js';
+
+        if (is_file($jsPath)) {
+            $jsFileTime = filemtime($jsPath);
+        }
+
+        $js = URL_THIRD_THEMES;
+
+        $js .= 'cast/js/main.js?v=' . $jsFileTime;
+
+        $jsTag = '<script type="module" src="' . $js . '"></script>';
+
+        $this->eeCp->add_to_foot($jsTag);
     }
 }

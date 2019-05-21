@@ -25,7 +25,7 @@ services:
       - ./serverConfig/nginx/cast-ee-3.conf:/etc/nginx/conf.d/cast-ee-3.conf:delegated
       - .:/app:delegated
       - ./src/ExpressionEngine:/app/work/testing/ee3/system/user/addons/cast:delegated
-      - ./themes:/app/work/testing/ee3/public/themes/user/cast:delegated
+      - ./themes/cast:/app/work/testing/ee3/public/themes/user/cast:delegated
       - cache-volume:/app/cache
     networks:
       common-cast-network:
@@ -43,7 +43,7 @@ services:
       - ./serverConfig/php/fpm-www.conf:/usr/local/etc/php-fpm.d/www.conf:delegated
       - .:/app:delegated
       - ./src/ExpressionEngine:/app/work/testing/ee3/system/user/addons/cast:delegated
-      - ./themes:/app/work/testing/ee3/public/themes/user/cast:delegated
+      - ./themes/cast:/app/work/testing/ee3/public/themes/user/cast:delegated
       - cache-volume:/app/cache
       - composer-home-volume:/composer-home-volume
     networks:
