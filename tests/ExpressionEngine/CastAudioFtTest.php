@@ -376,9 +376,17 @@ class CastAudioFtTest extends TestCase
                 )
             );
 
+        $this->eeCp->expects(self::at(2))
+            ->method('add_to_foot')
+            ->with(
+                self::equalTo(
+                    '<script src="https://unpkg.com/axios/dist/axios.min.js"></script>'
+                )
+            );
+
         $jsFileTime = filemtime(PATH_THIRD_THEMES . 'cast/js/main.js');
 
-        $this->eeCp->expects(self::at(2))
+        $this->eeCp->expects(self::at(3))
             ->method('add_to_foot')
             ->with(
                 self::equalTo(

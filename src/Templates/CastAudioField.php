@@ -16,22 +16,45 @@ $translator = Di::diContainer()->get(Translator::class);
 <div
     ref="CastAudioField"
     data-audio-file-name=""
+    data-csrf-token-name=""
+    data-csrf-token=""
+    data-upload-key=""
+    data-upload-url=""
+    @drag="preventDefault"
+    @dragstart="preventDefault"
+    @dragover="dragOver"
+    @dragenter="dragOver"
+    @dragleave="dragLeave"
+    @dragend="dragLeave"
+    @drop="drop"
 >
     <div class="CastAudioField__MainWrap">
-        <div class="CastAudioField__UploadIcon">
+        <div
+            class="CastAudioField__UploadIcon"
+            v-bind:class="{'CastAudioField__UploadIcon--IsActive': uploadIconIsActive}"
+        >
             <span class="CastAudioField__UploadIconWrapper">
                 <?=$t->render('Icons/UploadIcon')?>
             </span>
         </div>
-        <div class="CastAudioField__Uploading">
+        <div
+            class="CastAudioField__Uploading"
+            v-bind:class="{'CastAudioField__Uploading--IsActive': uploadInProgress}"
+        >
             <div class="CastAudioField__UploadingWrapper">
                 <?=$t->render('Components/WaitingAnimation')?>
             </div>
         </div>
-        <div class="CastAudioField__DropImagesToUpload">
+        <div
+            class="CastAudioField__DropImagesToUpload CastAudioField__DropImagesToUpload--IsActive"
+            v-bind:class="{'CastAudioField__DropImagesToUpload--IsActive': !hasFile}"
+        >
             <?=$translator->getTranslation('dragAudioFileHereToUpload')?>
         </div>
-        <div class="CastAudioField__FileDisplay">
+        <div
+            class="CastAudioField__FileDisplay"
+            v-bind:class="{'CastAudioField__FileDisplay--IsActive': hasFile}"
+        >
             <div class="CastAudioField__FileDisplayInner">
                 <span class="CastAudioField__RemoveFile">
                     <?=$t->render('Icons/CloseIcon')?>

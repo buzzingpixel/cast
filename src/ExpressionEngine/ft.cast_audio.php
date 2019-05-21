@@ -360,6 +360,10 @@ class Cast_audio_ft extends EE_Fieldtype
             '<script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js"></script>'
         );
 
+        $this->eeCp->add_to_foot(
+            '<script src="https://unpkg.com/axios/dist/axios.min.js"></script>'
+        );
+
         $jsFileTime = uniqid();
 
         $jsPath = PATH_THIRD_THEMES . 'cast/js/main.js';
