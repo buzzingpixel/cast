@@ -360,7 +360,7 @@ class CastAudioFtTest extends TestCase
 
         $cssFileTime = filemtime(PATH_THIRD_THEMES . 'cast/css/style.min.css');
 
-        $this->eeCp->expects(self::once())
+        $this->eeCp->expects(self::at(0))
             ->method('add_to_head')
             ->with(
                 self::equalTo(
@@ -368,7 +368,15 @@ class CastAudioFtTest extends TestCase
                 )
             );
 
-        $this->eeCp->expects(self::once())
+        $this->eeCp->expects(self::at(1))
+            ->method('add_to_foot')
+            ->with(
+                self::equalTo(
+                    '<script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js"></script>'
+                )
+            );
+
+        $this->eeCp->expects(self::at(2))
             ->method('add_to_foot')
             ->with(
                 self::equalTo(
