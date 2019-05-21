@@ -7,6 +7,9 @@ parameters:
         -
             message: '#Negated boolean expression is always false\.#'
             path: %currentWorkingDirectory%/src/Cast/Di.php
+        -
+            message: '#Undefined variable: \$t#'
+            path: %currentWorkingDirectory%/src/Templates/*
 
 includes:
     - vendor/phpstan/phpstan-deprecation-rules/rules.neon

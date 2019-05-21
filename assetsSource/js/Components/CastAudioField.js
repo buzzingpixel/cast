@@ -4,9 +4,16 @@ class CastAudioField {
             el,
 
             mounted () {
-                // TODO: Build out cast audio field JS
-                // eslint-disable-next-line no-console
-                console.log('TODO: Build out cast audio field JS');
+                this.audioFileName = this.$el.getAttribute('data-audio-file-name');
+                this.audioFileId = this.$el.getAttribute('data-audio-file-id');
+            },
+
+            data () {
+                return {
+                    audioFileName: '',
+                    audioFileId: '',
+                    audioFileUploadLocation: '',
+                };
             },
         };
     }

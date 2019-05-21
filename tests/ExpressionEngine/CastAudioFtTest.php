@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Tests\ExpressionEngine;
 
 use BuzzingPixel\Cast\Cast\Constants;
+use BuzzingPixel\Cast\Cast\Di;
 use BuzzingPixel\Cast\Cast\Facade\PhpInternals;
+use BuzzingPixel\Cast\Cast\Templating\TemplatingService;
 use BuzzingPixel\Cast\ExpressionEngine\Service\NormalizePaths;
 use Cast_audio_ft;
 use Cp;
@@ -345,11 +347,9 @@ class CastAudioFtTest extends TestCase
 
     public function testDisplayField() : void
     {
-        ob_start();
+        $templatingService = Di::diContainer()->get(TemplatingService::class);
 
-        include TESTING_APP_PATH . '/src/Templates/CastAudioField.php';
-
-        $output = ob_get_clean();
+        $output = $templatingService->render('CastAudioField');
 
         // Test having output in the buffer
         ob_start();
@@ -376,11 +376,13 @@ class CastAudioFtTest extends TestCase
                 )
             );
 
+        $jsFileTime = filemtime(PATH_THIRD_THEMES . 'cast/js/main.js');
+
         $this->eeCp->expects(self::at(2))
             ->method('add_to_foot')
             ->with(
                 self::equalTo(
-                    '<script type="module" src="https://test.com/themes/cast/js/main.js?v=' . $cssFileTime . '"></script>'
+                    '<script type="module" src="https://test.com/themes/cast/js/main.js?v=' . $jsFileTime . '"></script>'
                 )
             );
 

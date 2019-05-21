@@ -1,2 +1,2 @@
-class CastAudioField{constructor(o){return{el:o,mounted(){console.log("TODO: Build out cast audio field JS")}}}}export default CastAudioField;
+class CastAudioField{constructor(i){return{el:i,mounted(){this.audioFileName=this.$el.getAttribute("data-audio-file-name"),this.audioFileId=this.$el.getAttribute("data-audio-file-id")},data:()=>({audioFileName:"",audioFileId:"",audioFileUploadLocation:""})}}}export default CastAudioField;
 //# sourceMappingURL=CastAudioField.js.map
