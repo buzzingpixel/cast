@@ -1,0 +1,79 @@
+.CastAudioField__MainWrap {
+    background-color: #fbfbfb;
+    border: 1px solid rgba(0, 0, 20, .1);
+    position: relative;
+}
+
+.CastAudioField__UploadIcon,
+.CastAudioField__Uploading,
+.CastAudioField__FileDisplay,
+.CastAudioField__DropImagesToUpload {
+    display: none;
+}
+
+.CastAudioField__UploadIcon--IsActive,
+.CastAudioField__Uploading--IsActive,
+.CastAudioField__FileDisplay--IsActive,
+.CastAudioField__DropImagesToUpload--IsActive {
+    display: block;
+}
+
+.CastAudioField__DropImagesToUpload,
+.CastAudioField__FileDisplay {
+    padding: 30px 5px;
+    text-align: center;
+}
+
+.CastAudioField__UploadIcon,
+.CastAudioField__Uploading {
+    background-color: rgba(239, 239, 239, 0.8);
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 3;
+}
+
+.CastAudioField__UploadIconWrapper,
+.CastAudioField__UploadingWrapper {
+    color: #aeaeae;
+    left: 50%;
+    pointer-events: none;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+}
+
+.CastAudioField__FileDisplay {
+    user-select: none;
+}
+
+.CastAudioField__FileDisplayInner {
+    margin: 0 auto;
+    max-width: 350px;
+}
+
+.CastAudioField__RemoveFile {
+    background-image: linear-gradient(#fff,#fafafa);
+    border-radius: 2px;
+    box-shadow: inset 0 0 0 1px transparent, 0 0 0 1px rgba(0, 0, 0, .025), 0 1px 1px rgba(0, 0, 0, .1);
+    color: #4b4b4b;
+    cursor: pointer;
+    display: block;
+    margin-left: auto;
+    margin-right: 100px;
+    padding: 8px 10px 4px;
+    width: 20px;
+}
+
+.CastAudioField__RemoveFile:active {
+    background-image: linear-gradient(#e4e5e7, #eaebec);
+}
+
+.CastAudioField__AudioFileIcon {
+    display: block;
+    margin: 0 auto 10px;
+    width: 80px;
+}

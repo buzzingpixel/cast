@@ -1,0 +1,30 @@
+.WaitingAnimation {
+    margin: 0 auto;
+    text-align: center;
+    width: 70px;
+}
+
+.WaitingAnimation__Bounce {
+    animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+    background-color: #aeaeae;
+    border-radius: 100%;
+    display: inline-block;
+    height: 18px;
+    width: 18px;
+}
+
+.WaitingAnimation__Bounce--One {
+    animation-delay: -0.32s;
+}
+
+.WaitingAnimation__Bounce--Two {
+    animation-delay: -0.16s;
+}
+
+@keyframes sk-bouncedelay {
+    0%, 80%, 100% {
+        transform: scale(0);
+    } 40% {
+          transform: scale(1.0);
+      }
+}
