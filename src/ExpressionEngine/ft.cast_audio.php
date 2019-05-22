@@ -6,6 +6,7 @@ use BuzzingPixel\Cast\Cast\Constants;
 use BuzzingPixel\Cast\Cast\Di;
 use BuzzingPixel\Cast\Cast\Facade\PhpInternals;
 use BuzzingPixel\Cast\Cast\Templating\TemplatingService;
+use BuzzingPixel\Cast\Cast\Uploading\UploadKeysServiceContract;
 use BuzzingPixel\Cast\ExpressionEngine\Service\NormalizePaths;
 use EllisLab\ExpressionEngine\Service\Validation\Factory as ValidationFactory;
 use EllisLab\ExpressionEngine\Service\Validation\Result as ValidationResult;
@@ -26,6 +27,8 @@ class Cast_audio_ft extends EE_Fieldtype
     private $validationFactory;
     /** @var PhpInternals */
     private $phpInternals;
+    /** @var UploadKeysServiceContract */
+    private $uploadKeysService;
     /** @var TemplatingService */
     private $templatingService;
 
@@ -42,6 +45,7 @@ class Cast_audio_ft extends EE_Fieldtype
         ?NormalizePaths $normalizePaths = null,
         ?ValidationFactory $validationFactory = null,
         ?PhpInternals $phpInternals = null,
+        ?UploadKeysServiceContract $uploadKeysService = null,
         ?TemplatingService $templatingService = null
     ) {
         // @codeCoverageIgnoreStart
@@ -74,8 +78,12 @@ class Cast_audio_ft extends EE_Fieldtype
             $phpInternals = Di::diContainer()->get(PhpInternals::class);
         }
 
+        if (! $uploadKeysService) {
+            $uploadKeysService = Di::diContainer()->get(UploadKeysServiceContract::class);
+        }
+
         if (! $templatingService) {
-            $this->templatingService = Di::diContainer()->get(TemplatingService::class);
+            $templatingService = Di::diContainer()->get(TemplatingService::class);
         }
 
         // @codeCoverageIgnoreEnd
@@ -83,6 +91,8 @@ class Cast_audio_ft extends EE_Fieldtype
         $this->normalizePaths    = $normalizePaths;
         $this->validationFactory = $validationFactory;
         $this->phpInternals      = $phpInternals;
+        $this->uploadKeysService = $uploadKeysService;
+        $this->templatingService = $templatingService;
 
         $castPath = PATH_THIRD . 'cast/';
 
@@ -321,6 +331,7 @@ class Cast_audio_ft extends EE_Fieldtype
         return $this->templatingService->render('CastAudioField', [
             'csrfTokenName' => 'csrf_token',
             'csrfToken' => defined('CSRF_TOKEN') ? CSRF_TOKEN : '',
+            'uploadKey' => $this->uploadKeysService->createKey(),
         ]);
     }
 

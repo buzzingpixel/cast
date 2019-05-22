@@ -11,6 +11,7 @@ use BuzzingPixel\Cast\Cast\Templating\TemplatingService;
 /** @var TemplatingService $t */
 /** @var string $csrfTokenName */
 /** @var string $csrfToken */
+/** @var string $uploadKey */
 
 $translator = Di::diContainer()->get(Translator::class);
 ?>
@@ -20,7 +21,7 @@ $translator = Di::diContainer()->get(Translator::class);
     data-audio-file-name=""
     data-csrf-token-name="<?=$csrfTokenName?>"
     data-csrf-token="<?=$csrfToken?>"
-    data-upload-key=""
+    data-upload-key="<?=$uploadKey?>"
     data-upload-url=""
     @drag="preventDefault"
     @dragstart="preventDefault"

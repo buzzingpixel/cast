@@ -8,6 +8,7 @@ use BuzzingPixel\Cast\Cast\Constants;
 use BuzzingPixel\Cast\Cast\Di;
 use BuzzingPixel\Cast\Cast\Facade\PhpInternals;
 use BuzzingPixel\Cast\Cast\Templating\TemplatingService;
+use BuzzingPixel\Cast\Cast\Uploading\UploadKeysServiceContract;
 use BuzzingPixel\Cast\ExpressionEngine\Service\NormalizePaths;
 use Cast_audio_ft;
 use Cp;
@@ -16,6 +17,7 @@ use EE_Loader;
 use EllisLab\ExpressionEngine\Service\Validation\Factory as EEValidationFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Ramsey\Uuid\UuidFactory;
 use Throwable;
 use function filemtime;
 use function is_array;
@@ -30,6 +32,9 @@ class CastAudioFtTest extends TestCase
 
     /** @var MockObject&Cp */
     private $eeCp;
+
+    /** @var string */
+    private $uploadKey;
 
     /**
      * @throws Throwable
@@ -65,13 +70,21 @@ class CastAudioFtTest extends TestCase
         /** @var MockObject&PhpInternals $phpInternals */
         $phpInternals = $this->createMock(PhpInternals::class);
 
+        /** @var MockObject&UploadKeysServiceContract $uploadKeyService */
+        $uploadKeyService = $this->createMock(UploadKeysServiceContract::class);
+
+        $this->uploadKey = (new UuidFactory())->uuid4()->toString();
+
+        $uploadKeyService->method('createKey')->willReturn($this->uploadKey);
+
         $this->ft = new Cast_audio_ft(
             $eeLoader,
             $eeLang,
             $this->eeCp,
             $normalizePaths,
             new EEValidationFactory(),
-            $phpInternals
+            $phpInternals,
+            $uploadKeyService
         );
     }
 
@@ -355,6 +368,7 @@ class CastAudioFtTest extends TestCase
         $output = $templatingService->render('CastAudioField', [
             'csrfTokenName' => 'csrf_token',
             'csrfToken' => CSRF_TOKEN,
+            'uploadKey' => $this->uploadKey,
         ]);
 
         // Test having output in the buffer
