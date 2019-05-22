@@ -7,6 +7,7 @@ use BuzzingPixel\Cast\Cast\Di;
 use BuzzingPixel\Cast\Cast\Facade\PhpInternals;
 use BuzzingPixel\Cast\Cast\Templating\TemplatingService;
 use BuzzingPixel\Cast\Cast\Uploading\UploadKeysServiceContract;
+use BuzzingPixel\Cast\ExpressionEngine\Service\ActionsService;
 use BuzzingPixel\Cast\ExpressionEngine\Service\NormalizePaths;
 use EllisLab\ExpressionEngine\Service\Validation\Factory as ValidationFactory;
 use EllisLab\ExpressionEngine\Service\Validation\Result as ValidationResult;
@@ -30,6 +31,8 @@ class Cast_audio_ft extends EE_Fieldtype
     private $phpInternals;
     /** @var UploadKeysServiceContract */
     private $uploadKeysService;
+    /** @var ActionsService */
+    private $actionsService;
     /** @var TemplatingService */
     private $templatingService;
 
@@ -47,6 +50,7 @@ class Cast_audio_ft extends EE_Fieldtype
         ?ValidationFactory $validationFactory = null,
         ?PhpInternals $phpInternals = null,
         ?UploadKeysServiceContract $uploadKeysService = null,
+        ?ActionsService $actionsService = null,
         ?TemplatingService $templatingService = null
     ) {
         // @codeCoverageIgnoreStart
@@ -83,6 +87,10 @@ class Cast_audio_ft extends EE_Fieldtype
             $uploadKeysService = Di::diContainer()->get(UploadKeysServiceContract::class);
         }
 
+        if (! $actionsService) {
+            $actionsService = Di::diContainer()->get(ActionsService::class);
+        }
+
         if (! $templatingService) {
             $templatingService = Di::diContainer()->get(TemplatingService::class);
         }
@@ -93,6 +101,7 @@ class Cast_audio_ft extends EE_Fieldtype
         $this->validationFactory = $validationFactory;
         $this->phpInternals      = $phpInternals;
         $this->uploadKeysService = $uploadKeysService;
+        $this->actionsService    = $actionsService;
         $this->templatingService = $templatingService;
 
         $castPath = PATH_THIRD . 'cast/';
@@ -333,6 +342,7 @@ class Cast_audio_ft extends EE_Fieldtype
             'csrfTokenName' => 'csrf_token',
             'csrfToken' => defined('CSRF_TOKEN') ? CSRF_TOKEN : '',
             'uploadKey' => $this->uploadKeysService->createKey(),
+            'uploadUrl' => $this->actionsService->getUploadActionUrl(),
         ]);
     }
 

@@ -12,6 +12,7 @@ use BuzzingPixel\Cast\Cast\Templating\TemplatingService;
 /** @var string $csrfTokenName */
 /** @var string $csrfToken */
 /** @var string $uploadKey */
+/** @var string $uploadUrl */
 
 $translator = Di::diContainer()->get(Translator::class);
 ?>
@@ -22,7 +23,7 @@ $translator = Di::diContainer()->get(Translator::class);
     data-csrf-token-name="<?=$csrfTokenName?>"
     data-csrf-token="<?=$csrfToken?>"
     data-upload-key="<?=$uploadKey?>"
-    data-upload-url=""
+    data-upload-url="<?=$uploadUrl?>"
     @drag="preventDefault"
     @dragstart="preventDefault"
     @dragover="dragOver"

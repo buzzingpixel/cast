@@ -9,6 +9,7 @@ use BuzzingPixel\Cast\Cast\Di;
 use BuzzingPixel\Cast\Cast\Facade\PhpInternals;
 use BuzzingPixel\Cast\Cast\Templating\TemplatingService;
 use BuzzingPixel\Cast\Cast\Uploading\UploadKeysServiceContract;
+use BuzzingPixel\Cast\ExpressionEngine\Service\ActionsService;
 use BuzzingPixel\Cast\ExpressionEngine\Service\NormalizePaths;
 use Cast_audio_ft;
 use Cp;
@@ -77,6 +78,12 @@ class CastAudioFtTest extends TestCase
 
         $uploadKeyService->method('createKey')->willReturn($this->uploadKey);
 
+        /** @var MockObject&ActionsService $actionsService */
+        $actionsService = $this->createMock(ActionsService::class);
+
+        $actionsService->method('getUploadActionUrl')
+            ->willReturn('testUploadActionUrl');
+
         $this->ft = new Cast_audio_ft(
             $eeLoader,
             $eeLang,
@@ -84,7 +91,8 @@ class CastAudioFtTest extends TestCase
             $normalizePaths,
             new EEValidationFactory(),
             $phpInternals,
-            $uploadKeyService
+            $uploadKeyService,
+            $actionsService
         );
     }
 
@@ -369,6 +377,7 @@ class CastAudioFtTest extends TestCase
             'csrfTokenName' => 'csrf_token',
             'csrfToken' => CSRF_TOKEN,
             'uploadKey' => $this->uploadKey,
+            'uploadUrl' => 'testUploadActionUrl',
         ]);
 
         // Test having output in the buffer
