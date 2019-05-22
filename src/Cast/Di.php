@@ -8,6 +8,8 @@ namespace BuzzingPixel\Cast\Cast;
 
 use BuzzingPixel\Cast\Cast\Language\EnglishTranslations;
 use BuzzingPixel\Cast\Cast\Language\Translator;
+use BuzzingPixel\Cast\Cast\Uploading\UploadKeysServiceContract;
+use BuzzingPixel\Cast\ExpressionEngine\Uploading\UploadKeysService;
 use CI_DB_forge;
 use Cp;
 use DI\ContainerBuilder;
@@ -80,6 +82,10 @@ class Di
             Translator::class => static function () {
                 // TODO: determine what system this is (Craft/EE), then determine lang, then get appropriate translation
                 return new Translator(new EnglishTranslations());
+            },
+            UploadKeysServiceContract::class => static function (ContainerInterface $di) {
+                // TODO: determine what the system is (Craft/EE), then determine which service is appropriate
+                return $di->get(UploadKeysService::class);
             },
         ];
 

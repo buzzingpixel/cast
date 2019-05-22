@@ -12,7 +12,8 @@
     ],
     "require": {
         "php": "^7.1",
-        "php-di/php-di": "^6.0"
+        "php-di/php-di": "^6.0",
+        "ramsey/uuid": "^3.8"
     },
     "require-dev": {
         "codedungeon/phpunit-result-printer": "^0.26.2",
