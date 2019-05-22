@@ -340,8 +340,11 @@ class CastAudioFtTest extends TestCase
         self::assertTrue(is_array($data));
 
         self::assertSame(
-            ['test1' => 'test1'],
-            $this->ft->save_settings(['test1' => 'test1'])
+            ['cast_path' => 'testPath'],
+            $this->ft->save_settings([
+                'test1' => 'test1',
+                'cast_path' => 'testPath',
+            ])
         );
     }
 

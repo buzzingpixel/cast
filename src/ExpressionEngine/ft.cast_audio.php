@@ -298,6 +298,14 @@ class Cast_audio_ft extends EE_Fieldtype
     {
         $data = is_array($data) ? $data : [];
 
+        foreach (array_keys($data) as $key) {
+            if (mb_strpos($key, 'cast_') === 0) {
+                continue;
+            }
+
+            unset($data[$key]);
+        }
+
         return $data;
     }
 
