@@ -10,6 +10,10 @@ parameters:
         -
             message: '#Undefined variable: \$(.*)#'
             path: %currentWorkingDirectory%/src/Templates/*
+        -
+            message: '#Constructor of class Cast has an unused parameter \$whatIsThis\.#'
+            path: %currentWorkingDirectory%/src/ExpressionEngine/mod.cast.php
 
 includes:
     - vendor/phpstan/phpstan-deprecation-rules/rules.neon
+    - vendor/thecodingmachine/phpstan-safe-rule/phpstan-safe-rule.neon

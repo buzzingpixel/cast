@@ -8,7 +8,7 @@ use BuzzingPixel\Cast\Cast\Clock\CommonTime;
 use BuzzingPixel\Cast\Cast\Uploading\UploadKeysServiceContract;
 use BuzzingPixel\Cast\ExpressionEngine\Factory\QueryBuilderFactory;
 use Ramsey\Uuid\UuidFactory;
-use function strtotime;
+use function Safe\strtotime;
 
 class UploadKeysService implements UploadKeysServiceContract
 {
@@ -38,6 +38,7 @@ class UploadKeysService implements UploadKeysServiceContract
 
         $time = CommonTime::getCommonTime()->getTimestamp();
 
+        /** @noinspection PhpUnhandledExceptionInspection */
         $this->queryBuilderFactory->make()->insert(
             'cast_audio_upload_keys',
             [

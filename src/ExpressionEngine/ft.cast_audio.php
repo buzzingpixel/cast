@@ -11,6 +11,7 @@ use BuzzingPixel\Cast\ExpressionEngine\Service\NormalizePaths;
 use EllisLab\ExpressionEngine\Service\Validation\Factory as ValidationFactory;
 use EllisLab\ExpressionEngine\Service\Validation\Result as ValidationResult;
 use EllisLab\ExpressionEngine\Service\Validation\Rule\Callback as ValidationRuleCallback;
+use function Safe\filemtime;
 
 // phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 // phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
@@ -356,6 +357,7 @@ class Cast_audio_ft extends EE_Fieldtype
         $cssPath = PATH_THIRD_THEMES . 'cast/css/style.min.css';
 
         if (is_file($cssPath)) {
+            /** @noinspection PhpUnhandledExceptionInspection */
             $cssFileTime = filemtime($cssPath);
         }
 
@@ -391,6 +393,7 @@ class Cast_audio_ft extends EE_Fieldtype
         $jsPath = PATH_THIRD_THEMES . 'cast/js/main.js';
 
         if (is_file($jsPath)) {
+            /** @noinspection PhpUnhandledExceptionInspection */
             $jsFileTime = filemtime($jsPath);
         }
 
