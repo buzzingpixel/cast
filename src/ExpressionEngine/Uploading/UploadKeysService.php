@@ -50,6 +50,14 @@ class UploadKeysService implements UploadKeysServiceContract
         return $key;
     }
 
+    public function deleteKey(string $key) : void
+    {
+        $this->queryBuilderFactory->make()->delete(
+            'cast_audio_upload_keys',
+            ['key' => $key]
+        );
+    }
+
     public function validateKey(string $key) : bool
     {
         $query = (int) $this->queryBuilderFactory->make()
@@ -57,5 +65,16 @@ class UploadKeysService implements UploadKeysServiceContract
             ->count_all_results('cast_audio_upload_keys');
 
         return $query > 0;
+    }
+
+    public function consumeKey(string $key) : bool
+    {
+        $isValid = $this->validateKey($key);
+
+        if ($isValid) {
+            $this->deleteKey($key);
+        }
+
+        return $isValid;
     }
 }

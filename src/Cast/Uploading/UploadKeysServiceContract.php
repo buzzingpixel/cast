@@ -15,7 +15,17 @@ interface UploadKeysServiceContract
     public function createKey() : string;
 
     /**
+     * Deletes specified key
+     */
+    public function deleteKey(string $key) : void;
+
+    /**
      * Returns false if key is invalid, returns true if key is valid
      */
     public function validateKey(string $key) : bool;
+
+    /**
+     * Validates key, deletes if valid, returns true if valid, false if invalid
+     */
+    public function consumeKey(string $key) : bool;
 }

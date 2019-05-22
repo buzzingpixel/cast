@@ -24,6 +24,8 @@ class UploadKeysServiceTest extends TestCase
     private $queryBuilder1;
     /** @var MockObject&Query */
     private $queryBuilder2;
+    /** @var MockObject&Query */
+    private $queryBuilder3;
     /** @var MockObject&UuidInterface */
     private $uuid4;
     /** @var UploadKeysService */
@@ -52,6 +54,8 @@ class UploadKeysServiceTest extends TestCase
 
         $this->queryBuilder2 = $this->createMock(Query::class);
 
+        $this->queryBuilder3 = $this->createMock(Query::class);
+
         /** @var MockObject&QueryBuilderFactory $queryBuilderFactory */
         $queryBuilderFactory = $this->createMock(QueryBuilderFactory::class);
 
@@ -65,6 +69,10 @@ class UploadKeysServiceTest extends TestCase
 
                 if ($self->factoryMakeCalls === 2) {
                     return $this->queryBuilder2;
+                }
+
+                if ($self->factoryMakeCalls === 3) {
+                    return $this->queryBuilder3;
                 }
 
                 throw new LogicException('Query Builder Factory Make method called too many times');
@@ -102,6 +110,20 @@ class UploadKeysServiceTest extends TestCase
             );
 
         self::assertSame($key, $this->uploadKeysService->createKey());
+    }
+
+    public function testDeleteKey() : void
+    {
+        $key = 'fooBar';
+
+        $this->queryBuilder2->expects(self::once())
+            ->method('delete')
+            ->with(
+                self::equalTo('cast_audio_upload_keys'),
+                self::equalTo(['key' => $key])
+            );
+
+        $this->uploadKeysService->deleteKey($key);
     }
 
     public function testValidateKeyInvalidKey() : void
@@ -142,5 +164,55 @@ class UploadKeysServiceTest extends TestCase
             ->willReturn(1);
 
         self::assertTrue($this->uploadKeysService->validateKey($key));
+    }
+
+    public function testConsumeKeyInvalidKey() : void
+    {
+        $key = 'testKey';
+
+        $this->queryBuilder2->expects(self::at(0))
+            ->method('where')
+            ->with(
+                self::equalTo('key'),
+                self::equalTo($key)
+            )
+            ->willReturn($this->queryBuilder2);
+
+        $this->queryBuilder2->expects(self::at(1))
+            ->method('count_all_results')
+            ->with(self::equalTo('cast_audio_upload_keys'))
+            ->willReturn(0);
+
+        $this->queryBuilder3->expects(self::never())
+            ->method('delete');
+
+        self::assertFalse($this->uploadKeysService->consumeKey($key));
+    }
+
+    public function testConsumeKeyValidKey() : void
+    {
+        $key = 'testKey';
+
+        $this->queryBuilder2->expects(self::at(0))
+            ->method('where')
+            ->with(
+                self::equalTo('key'),
+                self::equalTo($key)
+            )
+            ->willReturn($this->queryBuilder2);
+
+        $this->queryBuilder2->expects(self::at(1))
+            ->method('count_all_results')
+            ->with(self::equalTo('cast_audio_upload_keys'))
+            ->willReturn(1);
+
+        $this->queryBuilder3->expects(self::at(0))
+            ->method('delete')
+            ->with(
+                self::equalTo('cast_audio_upload_keys'),
+                self::equalTo(['key' => $key])
+            );
+
+        self::assertTrue($this->uploadKeysService->consumeKey($key));
     }
 }
