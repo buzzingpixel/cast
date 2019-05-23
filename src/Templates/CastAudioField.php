@@ -32,6 +32,16 @@ $translator = Di::diContainer()->get(Translator::class);
     @dragend="dragLeave"
     @drop="drop"
 >
+    <input
+        type="hidden"
+        name="cast_upload_path"
+        v-model="castUploadPath"
+    >
+    <input
+        type="hidden"
+        name="cast_file_name"
+        v-model="castFileName"
+    >
     <div class="CastAudioField__MainWrap">
         <div
             class="CastAudioField__UploadIcon"
@@ -66,7 +76,7 @@ $translator = Di::diContainer()->get(Translator::class);
                 <span class="CastAudioField__AudioFileIcon">
                     <?=$t->render('Icons/SoundFileIcon')?>
                 </span>
-                <span class="CastAudioField__AudioFileName">TODO: File Name</span>
+                <span class="CastAudioField__AudioFileName">{{ castFileName }}</span>
             </div>
         </div>
     </div>

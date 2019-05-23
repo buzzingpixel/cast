@@ -21,6 +21,8 @@ class CastAudioField {
 
                 Instance.uploadUrl = String($el.getAttribute('data-upload-url'));
 
+                self.castFileName = String($el.getAttribute('data-audio-file-name'));
+
                 self.hasFile = $el.getAttribute('data-audio-file-name') !== '';
             },
 
@@ -28,6 +30,8 @@ class CastAudioField {
                 uploadIconIsActive: null,
                 uploadInProgress: null,
                 hasFile: null,
+                castUploadPath: null,
+                castFileName: null,
             },
 
             methods: {
@@ -90,8 +94,9 @@ class CastAudioField {
 
                     self.hasFile = true;
 
-                    // TODO: do something with the uploaded file location
-                    console.log(fileLocation, fileName);
+                    self.castUploadPath = fileLocation;
+
+                    self.castFileName = fileName;
                 },
 
                 uploadFailed () {
