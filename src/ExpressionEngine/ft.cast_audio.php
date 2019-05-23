@@ -24,6 +24,15 @@ use function Safe\json_encode;
 
 class Cast_audio_ft extends EE_Fieldtype
 {
+    /** @var bool */
+    public $has_array_data = true;
+
+    /** @var mixed[] */
+    public $info = [
+        'name' => Constants::NAME,
+        'version' => Constants::VERSION,
+    ];
+
     /** @var EE_Lang */
     private $lang;
     /** @var Cp|null */
@@ -42,17 +51,14 @@ class Cast_audio_ft extends EE_Fieldtype
     private $templatingService;
     /** @var Filesystem */
     private $filesystem;
-
-    /** @var mixed[] */
-    public $info = [
-        'name' => Constants::NAME,
-        'version' => Constants::VERSION,
-    ];
+    /** @var EE_Template */
+    private $eeTemplate;
 
     public function __construct(
         ?EE_Loader $loader = null,
         ?EE_Lang $lang = null,
         ?Cp $eeCp = null,
+        ?EE_Template $eeTemplate = null,
         ?NormalizePaths $normalizePaths = null,
         ?ValidationFactory $validationFactory = null,
         ?PhpInternals $phpInternals = null,
@@ -71,12 +77,12 @@ class Cast_audio_ft extends EE_Fieldtype
             $lang = Di::diContainer()->get(EE_Lang::class);
         }
 
-        if ($eeCp) {
-            $this->eeCp = $eeCp;
+        if (! $eeCp && isset(ee()->cp)) {
+            $eeCp = ee()->cp;
         }
 
-        if (! $eeCp && isset(ee()->cp)) {
-            $this->eeCp = ee()->cp;
+        if (! $eeTemplate) {
+            $eeTemplate = Di::diContainer()->get(EE_Template::class);
         }
 
         if (! $normalizePaths) {
@@ -110,6 +116,8 @@ class Cast_audio_ft extends EE_Fieldtype
         // @codeCoverageIgnoreEnd
 
         $this->lang              = $lang;
+        $this->eeCp              = $eeCp;
+        $this->eeTemplate        = $eeTemplate;
         $this->normalizePaths    = $normalizePaths;
         $this->validationFactory = $validationFactory;
         $this->phpInternals      = $phpInternals;
@@ -432,8 +440,48 @@ class Cast_audio_ft extends EE_Fieldtype
 
         $this->filesystem->rename(
             $uploadFile,
-            $uploadPath . DIRECTORY_SEPARATOR . $fileName
+            $uploadPath . DIRECTORY_SEPARATOR . $fileName,
+            true
         );
+    }
+
+    /**
+     * @param mixed       $data
+     * @param mixed       $params
+     * @param string|bool $tagdata
+     */
+    public function replace_tag($data, $params = [], $tagdata = false) : string
+    {
+        try {
+            $data = is_string($data) ? $data : '';
+            $data = json_decode($data, true);
+        } catch (Throwable $e) {
+            $data = [];
+        }
+
+        if (! $tagdata || ! is_string($tagdata) || mb_strpos($tagdata, '{') === false) {
+            return '';
+        }
+
+        $fileName = $data['cast_file_name'] ?? '';
+        $mimeType = $data['cast_mime_type'] ?? '';
+        $fileSize = $data['cast_file_size'] ?? '';
+
+        if (! $fileName) {
+            return '';
+        }
+
+        $fileUrl  = $this->normalizePaths->normalize($this->settings['cast_audio_upload_url'] ?? '');
+        $fileUrl .= '/' . $this->content_id() . '/' . $fileName;
+
+        return $this->eeTemplate->parse_variables($tagdata, [
+            [
+                'cast:file_name' => $fileName,
+                'cast:mime_type' => $mimeType,
+                'cast:file_size' => $fileSize,
+                'cast:file_url' => $fileUrl,
+            ],
+        ]);
     }
 
     private function setCpCssAndJs() : void

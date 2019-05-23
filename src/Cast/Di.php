@@ -18,6 +18,7 @@ use DI\ContainerBuilder;
 use EE_Config;
 use EE_Lang;
 use EE_Loader;
+use EE_Template;
 use EllisLab\ExpressionEngine\Service\Validation\Factory as EEValidationFactory;
 use Psr\Container\ContainerInterface;
 use Zend\HttpHandlerRunner\Emitter\EmitterStack;
@@ -83,6 +84,11 @@ class Di
             },
             EE_Loader::class => static function () {
                 return ee()->load;
+            },
+            EE_Template::class => static function () {
+                ee()->load->library('template', null, 'TMPL');
+
+                return ee()->TMPL;
             },
             EmitterStack::class => static function (ContainerInterface $di) {
                 $stack = new EmitterStack();

@@ -15,6 +15,7 @@ use Cast_audio_ft;
 use Cp;
 use EE_Lang;
 use EE_Loader;
+use EE_Template;
 use EllisLab\ExpressionEngine\Service\Validation\Factory as EEValidationFactory;
 use JsonSerializable;
 use LogicException;
@@ -42,6 +43,8 @@ class CastAudioFtTest extends TestCase
     private $uploadKey;
     /** @var MockObject&EE_Lang $eeLang */
     private $eeLang;
+    /** @var MockObject&EE_Template */
+    private $eeTemplate;
     /** @var MockObject&Filesystem */
     private $filesystem;
 
@@ -62,6 +65,8 @@ class CastAudioFtTest extends TestCase
         $this->eeLang = $this->createMock(EE_Lang::class);
 
         $this->eeCp = $this->createMock(Cp::class);
+
+        $this->eeTemplate = $this->createMock(EE_Template::class);
 
         $this->eeLang->expects(self::once())
             ->method('loadfile')
@@ -97,6 +102,7 @@ class CastAudioFtTest extends TestCase
             $eeLoader,
             $this->eeLang,
             $this->eeCp,
+            $this->eeTemplate,
             $normalizePaths,
             new EEValidationFactory(),
             $phpInternals,
@@ -552,12 +558,60 @@ class CastAudioFtTest extends TestCase
             ->method('rename')
             ->with(
                 self::equalTo('testFilePath'),
-                self::equalTo('/--testNormalize/testFileName')
+                self::equalTo('/--testNormalize/testFileName'),
+                self::equalTo(true)
             );
 
         $this->ft->post_save(json_encode([
             'cast_upload_path' => 'testFilePath',
             'cast_file_name' => 'testFileName',
         ]));
+    }
+
+    public function testReplaceTagNoTagData() : void
+    {
+        $this->eeTemplate->expects(self::never())->method(self::anything());
+
+        self::assertSame('', $this->ft->replace_tag('', null, ''));
+
+        self::assertSame('', $this->ft->replace_tag('', null, null));
+    }
+
+    public function testReplaceTagNoData() : void
+    {
+        $this->eeTemplate->expects(self::never())->method(self::anything());
+
+        self::assertSame('', $this->ft->replace_tag('', null, '{test}'));
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function testReplace() : void
+    {
+        $this->eeTemplate->expects(self::once())
+            ->method('parse_variables')
+        ->with(
+            self::equalTo('{test}'),
+            self::equalTo([
+                [
+                    'cast:file_name' => 'testFileName',
+                    'cast:mime_type' => 'testMimeType',
+                    'cast:file_size' => 'testFileSize',
+                    'cast:file_url' => '--testNormalize//testFileName',
+                ],
+            ])
+        )
+        ->willReturn('testParseVarsReturn');
+
+        self::assertSame('testParseVarsReturn', $this->ft->replace_tag(
+            json_encode([
+                'cast_file_name' => 'testFileName',
+                'cast_mime_type' => 'testMimeType',
+                'cast_file_size' => 'testFileSize',
+            ]),
+            null,
+            '{test}'
+        ));
     }
 }
