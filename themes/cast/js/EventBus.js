@@ -1,2 +1,2 @@
-export const EventBus=new Vue({data:()=>({menuIsOpen:!1})});
+export const EventBus=new Vue({data:()=>({})});
 //# sourceMappingURL=EventBus.js.map

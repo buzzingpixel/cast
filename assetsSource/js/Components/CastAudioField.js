@@ -13,6 +13,8 @@ class CastAudioField {
 
                 const { $el } = self;
 
+                Instance.vm = self;
+
                 Instance.csrfTokenName = String($el.getAttribute('data-csrf-token-name'));
 
                 Instance.csrfToken = String($el.getAttribute('data-csrf-token'));
@@ -32,6 +34,20 @@ class CastAudioField {
                 hasFile: null,
                 castUploadPath: null,
                 castFileName: null,
+            },
+
+            watch: {
+                hasFile: (val) => {
+                    const { vm } = Instance;
+
+                    if (val) {
+                        return;
+                    }
+
+                    vm.castUploadPath = '';
+
+                    vm.castFileName = '';
+                },
             },
 
             methods: {
@@ -103,6 +119,10 @@ class CastAudioField {
                     const self = this;
 
                     self.uploadInProgress = false;
+                },
+
+                removeFile () {
+                    this.hasFile = false;
                 },
             },
         };

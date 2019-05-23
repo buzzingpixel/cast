@@ -1,1 +1,1 @@
-{"version":3,"sources":["assetsSource/js/EventBus.js"],"names":["EventBus","Vue","data","menuIsOpen"],"mappings":"OAGO,MAAMA,SAAW,IAAIC,IAAI,CAC5BC,KAAK,KACM,CACHC,YAAY"}
+{"version":3,"sources":["assetsSource/js/EventBus.js"],"names":["EventBus","Vue","data"],"mappings":"OAGO,MAAMA,SAAW,IAAIC,IAAI,CAC5BC,KAAK,KACM"}

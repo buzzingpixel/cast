@@ -70,7 +70,10 @@ $translator = Di::diContainer()->get(Translator::class);
             v-bind:class="{'CastAudioField__FileDisplay--IsActive': hasFile}"
         >
             <div class="CastAudioField__FileDisplayInner">
-                <span class="CastAudioField__RemoveFile">
+                <span
+                    class="CastAudioField__RemoveFile"
+                    v-on:click="removeFile"
+                >
                     <?=$t->render('Icons/CloseIcon')?>
                 </span>
                 <span class="CastAudioField__AudioFileIcon">
