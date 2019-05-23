@@ -45,10 +45,10 @@ class FtpConfig
 
         $this->root = (string) ($config['root'] ?? '');
 
-        $this->passive = ($config['root'] ?? true);
+        $this->passive = ($config['passive'] ?? true);
         $this->passive = $this->passive === true;
 
-        $this->ssl = ($config['root'] ?? false);
+        $this->ssl = ($config['ssl'] ?? false);
         $this->ssl = $this->ssl === true;
 
         $this->timeout = (int) ($config['timeout'] ?? 30);
