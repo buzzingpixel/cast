@@ -1,3 +1,6 @@
+/**
+ * TODO: respond to file close being clicked
+ */
 class CastAudioField {
     constructor (el) {
         const Instance = this;
@@ -22,9 +25,9 @@ class CastAudioField {
             },
 
             data: {
-                uploadIconIsActive: false,
-                uploadInProgress: false,
-                hasFile: false,
+                uploadIconIsActive: null,
+                uploadInProgress: null,
+                hasFile: null,
             },
 
             methods: {
@@ -68,8 +71,8 @@ class CastAudioField {
 
                         Instance.uploadFile(
                             file,
-                            () => {
-                                self.uploadComplete();
+                            (fileLocation, fileName) => {
+                                self.uploadComplete(fileLocation, fileName);
                             },
                             () => {
                                 self.uploadFailed();
@@ -80,10 +83,15 @@ class CastAudioField {
                     }
                 },
 
-                uploadComplete () {
+                uploadComplete (fileLocation, fileName) {
                     const self = this;
 
                     self.uploadInProgress = false;
+
+                    self.hasFile = true;
+
+                    // TODO: do something with the uploaded file location
+                    console.log(fileLocation, fileName);
                 },
 
                 uploadFailed () {
@@ -111,22 +119,33 @@ class CastAudioField {
         ajaxData.append('file', File, File.name);
 
         // noinspection ES6ModulesDependencies,JSUnresolvedVariable
-        axios.post(Instance.uploadUrl, FormData)
+        axios.post(
+            Instance.uploadUrl,
+            ajaxData,
+            {
+                responseType: 'json',
+                validateStatus: status => status === 200 || status === 400,
+            },
+        )
             .then((resp) => {
-                console.log('then', resp);
+                Instance.uploadKey = resp.data.newUploadKey;
+
+                if (!resp.data.success && typeof FailureCallback === 'function') {
+                    FailureCallback(resp);
+                }
 
                 if (typeof SuccessCallback !== 'function') {
                     return;
                 }
 
-                SuccessCallback();
+                SuccessCallback(resp.data.file.location, resp.data.file.name);
             })
-            .catch(() => {
+            .catch((err) => {
                 if (typeof FailureCallback !== 'function') {
                     return;
                 }
 
-                FailureCallback();
+                FailureCallback(err);
             });
     }
 }

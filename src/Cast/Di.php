@@ -8,7 +8,9 @@ namespace BuzzingPixel\Cast\Cast;
 
 use BuzzingPixel\Cast\Cast\Language\EnglishTranslations;
 use BuzzingPixel\Cast\Cast\Language\Translator;
+use BuzzingPixel\Cast\Cast\Uploading\CacheLocationServiceContract;
 use BuzzingPixel\Cast\Cast\Uploading\UploadKeysServiceContract;
+use BuzzingPixel\Cast\ExpressionEngine\Service\CacheLocationService;
 use BuzzingPixel\Cast\ExpressionEngine\Uploading\UploadKeysService;
 use CI_DB_forge;
 use Cp;
@@ -18,6 +20,8 @@ use EE_Lang;
 use EE_Loader;
 use EllisLab\ExpressionEngine\Service\Validation\Factory as EEValidationFactory;
 use Psr\Container\ContainerInterface;
+use Zend\HttpHandlerRunner\Emitter\EmitterStack;
+use Zend\HttpHandlerRunner\Emitter\SapiEmitter;
 
 class Di
 {
@@ -55,6 +59,10 @@ class Di
     {
         // @codeCoverageIgnoreStart
         return [
+            CacheLocationServiceContract::class => static function (ContainerInterface $di) {
+                // TODO: determine what system this is (Craft/EE), then determine lang, then get appropriate translation
+                return $di->get(CacheLocationService::class);
+            },
             CI_DB_forge::class => static function () {
                 ee()->load->dbforge();
 
@@ -75,6 +83,13 @@ class Di
             },
             EE_Loader::class => static function () {
                 return ee()->load;
+            },
+            EmitterStack::class => static function (ContainerInterface $di) {
+                $stack = new EmitterStack();
+
+                $stack->push($di->get(SapiEmitter::class));
+
+                return $stack;
             },
             EEValidationFactory::class => static function () {
                 return ee('Validation');

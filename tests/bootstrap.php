@@ -17,5 +17,6 @@ define('PATH_THIRD', 'pathThirdTest');
 define('PATH_THIRD_THEMES', TESTING_APP_PATH . '/themes/');
 define('URL_THIRD_THEMES', 'https://test.com/themes/');
 define('CSRF_TOKEN', 'testCsrfToken');
+define('SYSPATH', TESTING_APP_PATH . '/tests/filesystemTesting/sysPath/');
 
 require dirname(__DIR__) . '/vendor/autoload.php';

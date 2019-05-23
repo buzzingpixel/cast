@@ -50,7 +50,7 @@ $translator = Di::diContainer()->get(Translator::class);
             </div>
         </div>
         <div
-            class="CastAudioField__DropImagesToUpload CastAudioField__DropImagesToUpload--IsActive"
+            class="CastAudioField__DropImagesToUpload"
             v-bind:class="{'CastAudioField__DropImagesToUpload--IsActive': !hasFile}"
         >
             <?=$translator->getTranslation('dragAudioFileHereToUpload')?>
