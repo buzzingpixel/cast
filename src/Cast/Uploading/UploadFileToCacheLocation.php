@@ -11,6 +11,7 @@ use Zend\Diactoros\ResponseFactory;
 use Zend\HttpHandlerRunner\Emitter\EmitterStack;
 use function in_array;
 use function Safe\json_encode;
+use function Safe\preg_replace;
 
 class UploadFileToCacheLocation
 {
@@ -58,6 +59,9 @@ class UploadFileToCacheLocation
 
         $fileName = $file['name'] ?? null;
         $tmpFile  = $file['tmp_name'] ?? null;
+
+        /** @noinspection PhpUnhandledExceptionInspection */
+        $fileName = (string) preg_replace('/\s+/', '-', $fileName);
 
         if (! $fileName ||
             ! $tmpFile ||

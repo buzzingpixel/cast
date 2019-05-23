@@ -324,7 +324,7 @@ class UploadFileToCacheLocationTest extends TestCase
         $key = 'fooBarTestUploadKeyAgain';
 
         $file = [
-            'name' => 'fooBar.mp3',
+            'name' => 'f   oo Bar.mp3',
             'tmp_name' => '/foo/fooBar.mp3',
         ];
 
@@ -336,7 +336,7 @@ class UploadFileToCacheLocationTest extends TestCase
             ->method('rename')
             ->with(
                 self::equalTo($file['tmp_name']),
-                self::equalTo('/foo/bar/' . $file['name']),
+                self::equalTo('/foo/bar/f-oo-Bar.mp3'),
                 self::equalTo(true)
             )
             ->willReturn(true);
@@ -382,7 +382,7 @@ class UploadFileToCacheLocationTest extends TestCase
         self::assertSame('application/json', $headers['Content-Type'][0]);
 
         self::assertSame(
-            '{"success":true,"message":"","newUploadKey":"","file":{"location":"\/foo\/bar\/fooBar.mp3","name":"fooBar.mp3","mimeType":"audio\/aac","fileSize":"0"}}',
+            '{"success":true,"message":"","newUploadKey":"","file":{"location":"\/foo\/bar\/f-oo-Bar.mp3","name":"f-oo-Bar.mp3","mimeType":"audio\/aac","fileSize":"0"}}',
             (string) $this->testResponse->getBody()
         );
     }
