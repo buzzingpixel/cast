@@ -17,6 +17,7 @@ use BuzzingPixel\Cast\Cast\Templating\TemplatingService;
 /** @var string $fileName */
 /** @var string $mimeType */
 /** @var string $fileSize */
+/** @var string $ftp */
 
 $translator = Di::diContainer()->get(Translator::class);
 ?>
@@ -38,6 +39,11 @@ $translator = Di::diContainer()->get(Translator::class);
     @dragend="dragLeave"
     @drop="drop"
 >
+    <input
+        type="hidden"
+        name="cast_ftp"
+        value="<?=$ftp?>"
+    >
     <input
         type="hidden"
         name="<?=$fieldName?>[cast_upload_path]"

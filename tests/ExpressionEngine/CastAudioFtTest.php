@@ -398,6 +398,7 @@ class CastAudioFtTest extends TestCase
             'fileName' => '',
             'mimeType' => '',
             'fileSize' => '',
+            'ftp' => 'n',
         ]);
 
         // Test having output in the buffer
@@ -502,12 +503,12 @@ class CastAudioFtTest extends TestCase
 
     public function testSaveNotArray() : void
     {
-        self::assertSame('[]', $this->ft->save('fooBar'));
+        self::assertSame('{"ftp":"n"}', $this->ft->save('fooBar'));
     }
 
     public function testSave() : void
     {
-        self::assertSame('{"foo":"bar"}', $this->ft->save(['foo' => 'bar']));
+        self::assertSame('{"foo":"bar","ftp":"n"}', $this->ft->save(['foo' => 'bar']));
     }
 
     public function testPostSaveBadData() : void

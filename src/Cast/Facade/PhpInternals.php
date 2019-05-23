@@ -6,6 +6,7 @@ namespace BuzzingPixel\Cast\Cast\Facade;
 
 use function is_dir;
 use function Safe\filesize;
+use function Safe\fopen;
 use function Safe\mime_content_type;
 
 // phpcs:disable SlevomatCodingStandard.ControlStructures.ControlStructureSpacing.IncorrectLinesCountAfterControlStructure
@@ -31,6 +32,17 @@ class PhpInternals
         // @codeCoverageIgnoreStart
         /** @noinspection PhpUnhandledExceptionInspection */
         return filesize($fileName);
+        // @codeCoverageIgnoreEnd
+    }
+
+    /**
+     * @return resource
+     */
+    public function fopen(string $filename, string $mode)
+    {
+        // @codeCoverageIgnoreStart
+        /** @noinspection PhpUnhandledExceptionInspection */
+        return fopen($filename, $mode);
         // @codeCoverageIgnoreEnd
     }
 

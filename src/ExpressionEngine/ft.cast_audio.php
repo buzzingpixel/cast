@@ -6,6 +6,8 @@ use BuzzingPixel\Cast\Cast\Constants;
 use BuzzingPixel\Cast\Cast\Di;
 use BuzzingPixel\Cast\Cast\Facade\PhpInternals;
 use BuzzingPixel\Cast\Cast\Templating\TemplatingService;
+use BuzzingPixel\Cast\Cast\Uploading\FlysystemFactory;
+use BuzzingPixel\Cast\Cast\Uploading\FtpConfig;
 use BuzzingPixel\Cast\Cast\Uploading\UploadKeysServiceContract;
 use BuzzingPixel\Cast\ExpressionEngine\Service\ActionsService;
 use BuzzingPixel\Cast\ExpressionEngine\Service\NormalizePaths;
@@ -51,6 +53,8 @@ class Cast_audio_ft extends EE_Fieldtype
     private $templatingService;
     /** @var Filesystem */
     private $filesystem;
+    /** @var FlysystemFactory */
+    private $flysystemFactory;
     /** @var EE_Template */
     private $eeTemplate;
 
@@ -65,6 +69,7 @@ class Cast_audio_ft extends EE_Fieldtype
         ?UploadKeysServiceContract $uploadKeysService = null,
         ?ActionsService $actionsService = null,
         ?Filesystem $filesystem = null,
+        ?FlysystemFactory $flysystemFactory = null,
         ?TemplatingService $templatingService = null
     ) {
         // @codeCoverageIgnoreStart
@@ -109,6 +114,10 @@ class Cast_audio_ft extends EE_Fieldtype
             $filesystem = Di::diContainer()->get(Filesystem::class);
         }
 
+        if (! $flysystemFactory) {
+            $flysystemFactory = Di::diContainer()->get(FlysystemFactory::class);
+        }
+
         if (! $templatingService) {
             $templatingService = Di::diContainer()->get(TemplatingService::class);
         }
@@ -124,6 +133,7 @@ class Cast_audio_ft extends EE_Fieldtype
         $this->uploadKeysService = $uploadKeysService;
         $this->actionsService    = $actionsService;
         $this->filesystem        = $filesystem;
+        $this->flysystemFactory  = $flysystemFactory;
         $this->templatingService = $templatingService;
 
         $castPath = PATH_THIRD . 'cast/';
@@ -376,6 +386,7 @@ class Cast_audio_ft extends EE_Fieldtype
             'fileName' => $data['cast_file_name'] ?? '',
             'mimeType' => $data['cast_mime_type'] ?? '',
             'fileSize' => $data['cast_file_size'] ?? '',
+            'ftp' => $data['cast_ftp'] ?? 'n',
         ]);
     }
 
@@ -404,6 +415,18 @@ class Cast_audio_ft extends EE_Fieldtype
     {
         try {
             $data = is_array($data) ? $data : [];
+
+            $ftp = $data['cast_ftp'] ?? 'n';
+
+            $data['ftp'] = $ftp === 'y' ? 'y' : 'n';
+
+            $uploadFile = $data['cast_upload_path'] ?? '';
+
+            if ($uploadFile) {
+                $ftp = $this->settings['cast_audio_use_ftp'] ?? 'n';
+
+                $data['ftp'] = $ftp === 'y' ? 'y' : 'n';
+            }
 
             return json_encode($data);
         } catch (Throwable $e) {
@@ -436,13 +459,41 @@ class Cast_audio_ft extends EE_Fieldtype
             $uploadPath . DIRECTORY_SEPARATOR . $this->content_id()
         );
 
+        $target = $uploadPath . DIRECTORY_SEPARATOR . $fileName;
+
         $this->filesystem->mkdir($uploadPath, 0777);
 
-        $this->filesystem->rename(
-            $uploadFile,
-            $uploadPath . DIRECTORY_SEPARATOR . $fileName,
-            true
+        $this->filesystem->rename($uploadFile, $target, true);
+
+        $ftp = $this->settings['cast_audio_use_ftp'] ?? 'n';
+
+        if ($ftp !== 'y') {
+            return;
+        }
+
+        $remotePath = $this->normalizePaths->normalize(
+            $this->settings['cast_audio_upload_ftp_remote_path'] ?? ''
         );
+
+        // TODO: Handle SFTP?
+        $flysystem = $this->flysystemFactory->makeFtp(new FtpConfig([
+            'host' => $this->settings['cast_audio_upload_ftp_server'] ?? '',
+            'username' => $this->settings['cast_audio_upload_ftp_user_name'] ?? '',
+            'password' => $this->settings['cast_audio_upload_ftp_password'] ?? '',
+            'port' => $this->settings['cast_audio_upload_ftp_port'] ?? '',
+        ]));
+
+        $dest = '';
+
+        if ($remotePath) {
+            $dest = $remotePath . '/';
+        }
+
+        $dest .= $fileName;
+
+        $stream = $this->phpInternals->fopen($target, 'r+');
+        /** @noinspection PhpUnhandledExceptionInspection */
+        $flysystem->writeStream($dest, $stream);
     }
 
     /**

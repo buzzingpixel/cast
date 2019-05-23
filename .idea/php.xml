@@ -106,6 +106,7 @@
       <path value="$PROJECT_DIR$/vendor/zendframework/zend-httphandlerrunner" />
       <path value="$PROJECT_DIR$/vendor/thecodingmachine/safe" />
       <path value="$PROJECT_DIR$/vendor/thecodingmachine/phpstan-safe-rule" />
+      <path value="$PROJECT_DIR$/vendor/league/flysystem" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.1" />
