@@ -12,7 +12,10 @@ use BuzzingPixel\Cast\ExpressionEngine\Service\NormalizePaths;
 use EllisLab\ExpressionEngine\Service\Validation\Factory as ValidationFactory;
 use EllisLab\ExpressionEngine\Service\Validation\Result as ValidationResult;
 use EllisLab\ExpressionEngine\Service\Validation\Rule\Callback as ValidationRuleCallback;
+use Symfony\Component\Filesystem\Filesystem;
 use function Safe\filemtime;
+use function Safe\json_decode;
+use function Safe\json_encode;
 
 // phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 // phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
@@ -21,6 +24,8 @@ use function Safe\filemtime;
 
 class Cast_audio_ft extends EE_Fieldtype
 {
+    /** @var EE_Lang */
+    private $lang;
     /** @var Cp|null */
     private $eeCp;
     /** @var NormalizePaths */
@@ -35,6 +40,8 @@ class Cast_audio_ft extends EE_Fieldtype
     private $actionsService;
     /** @var TemplatingService */
     private $templatingService;
+    /** @var Filesystem */
+    private $filesystem;
 
     /** @var mixed[] */
     public $info = [
@@ -51,6 +58,7 @@ class Cast_audio_ft extends EE_Fieldtype
         ?PhpInternals $phpInternals = null,
         ?UploadKeysServiceContract $uploadKeysService = null,
         ?ActionsService $actionsService = null,
+        ?Filesystem $filesystem = null,
         ?TemplatingService $templatingService = null
     ) {
         // @codeCoverageIgnoreStart
@@ -91,17 +99,23 @@ class Cast_audio_ft extends EE_Fieldtype
             $actionsService = Di::diContainer()->get(ActionsService::class);
         }
 
+        if (! $filesystem) {
+            $filesystem = Di::diContainer()->get(Filesystem::class);
+        }
+
         if (! $templatingService) {
             $templatingService = Di::diContainer()->get(TemplatingService::class);
         }
 
         // @codeCoverageIgnoreEnd
 
+        $this->lang              = $lang;
         $this->normalizePaths    = $normalizePaths;
         $this->validationFactory = $validationFactory;
         $this->phpInternals      = $phpInternals;
         $this->uploadKeysService = $uploadKeysService;
         $this->actionsService    = $actionsService;
+        $this->filesystem        = $filesystem;
         $this->templatingService = $templatingService;
 
         $castPath = PATH_THIRD . 'cast/';
@@ -336,6 +350,13 @@ class Cast_audio_ft extends EE_Fieldtype
      */
     public function display_field($data) : string
     {
+        try {
+            $data = is_string($data) ? $data : '';
+            $data = json_decode($data, true);
+        } catch (Throwable $e) {
+            $data = [];
+        }
+
         $this->setCpCssAndJs();
 
         return $this->templatingService->render('CastAudioField', [
@@ -343,7 +364,74 @@ class Cast_audio_ft extends EE_Fieldtype
             'csrfToken' => defined('CSRF_TOKEN') ? CSRF_TOKEN : '',
             'uploadKey' => $this->uploadKeysService->createKey(),
             'uploadUrl' => $this->actionsService->getUploadActionUrl(),
+            'fieldName' => $this->field_name,
+            'audioFileName' => $data['cast_file_name'] ?? '',
         ]);
+    }
+
+    /**
+     * @param mixed $data
+     *
+     * @return bool|string
+     */
+    public function validate($data)
+    {
+        $data = is_array($data) ? $data : [];
+
+        $uploadFile = $data['cast_upload_path'] ?? '';
+
+        if (! $uploadFile) {
+            return true;
+        }
+
+        return is_file($uploadFile) ? true : $this->lang->line('badFileUpload');
+    }
+
+    /**
+     * @param mixed $data
+     */
+    public function save($data) : string
+    {
+        try {
+            $data = is_array($data) ? $data : [];
+
+            return json_encode($data);
+        } catch (Throwable $e) {
+            return '';
+        }
+    }
+
+    /**
+     * @param mixed $data
+     */
+    public function post_save($data) : void
+    {
+        try {
+            $data = is_string($data) ? $data : '';
+            $data = json_decode($data, true);
+        } catch (Throwable $e) {
+            $data = [];
+        }
+
+        $uploadFile = $data['cast_upload_path'] ?? '';
+        $fileName   = $data['cast_file_name'] ?? '';
+
+        if (! $uploadFile || ! $fileName) {
+            return;
+        }
+
+        $uploadPath = $this->settings['cast_audio_upload_path'] ?? '';
+
+        $uploadPath = $this->normalizePaths->normalize(
+            $uploadPath . DIRECTORY_SEPARATOR . $this->content_id()
+        );
+
+        $this->filesystem->mkdir($uploadPath, 0777);
+
+        $this->filesystem->rename(
+            $uploadFile,
+            $uploadPath . DIRECTORY_SEPARATOR . $fileName
+        );
     }
 
     private function setCpCssAndJs() : void

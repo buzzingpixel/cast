@@ -13,13 +13,15 @@ use BuzzingPixel\Cast\Cast\Templating\TemplatingService;
 /** @var string $csrfToken */
 /** @var string $uploadKey */
 /** @var string $uploadUrl */
+/** @var string $fieldName */
+/** @var string $audioFileName */
 
 $translator = Di::diContainer()->get(Translator::class);
 ?>
 
 <div
     ref="CastAudioField"
-    data-audio-file-name=""
+    data-audio-file-name="<?=$audioFileName?>"
     data-csrf-token-name="<?=$csrfTokenName?>"
     data-csrf-token="<?=$csrfToken?>"
     data-upload-key="<?=$uploadKey?>"
@@ -34,13 +36,14 @@ $translator = Di::diContainer()->get(Translator::class);
 >
     <input
         type="hidden"
-        name="cast_upload_path"
+        name="<?=$fieldName?>[cast_upload_path]"
         v-model="castUploadPath"
     >
     <input
         type="hidden"
-        name="cast_file_name"
+        name="<?=$fieldName?>[cast_file_name]"
         v-model="castFileName"
+        value="<?=$audioFileName?>"
     >
     <div class="CastAudioField__MainWrap">
         <div

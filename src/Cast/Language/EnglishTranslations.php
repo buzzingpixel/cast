@@ -21,5 +21,6 @@ final class EnglishTranslations
         'valid_path_required' => 'A valid path is required',
         'must_be_positive_integer' => 'Must be positive integer',
         'dragAudioFileHereToUpload' => 'Drag audio file here to upload',
+        'badFileUpload' => 'Something went wrong with the file upload, please try again',
     ];
 }

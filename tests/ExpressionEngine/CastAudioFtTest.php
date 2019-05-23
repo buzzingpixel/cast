@@ -16,14 +16,18 @@ use Cp;
 use EE_Lang;
 use EE_Loader;
 use EllisLab\ExpressionEngine\Service\Validation\Factory as EEValidationFactory;
+use JsonSerializable;
+use LogicException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\UuidFactory;
+use Symfony\Component\Filesystem\Filesystem;
 use Throwable;
 use function filemtime;
 use function is_array;
 use function ob_get_clean;
 use function ob_start;
+use function Safe\json_encode;
 use function sprintf;
 
 class CastAudioFtTest extends TestCase
@@ -36,6 +40,10 @@ class CastAudioFtTest extends TestCase
 
     /** @var string */
     private $uploadKey;
+    /** @var MockObject&EE_Lang $eeLang */
+    private $eeLang;
+    /** @var MockObject&Filesystem */
+    private $filesystem;
 
     /**
      * @throws Throwable
@@ -51,12 +59,11 @@ class CastAudioFtTest extends TestCase
             ->method('add_package_path')
             ->with(self::equalTo('pathThirdTestcast/'));
 
-        /** @var MockObject&EE_Lang $eeLang */
-        $eeLang = $this->createMock(EE_Lang::class);
+        $this->eeLang = $this->createMock(EE_Lang::class);
 
         $this->eeCp = $this->createMock(Cp::class);
 
-        $eeLang->expects(self::once())
+        $this->eeLang->expects(self::once())
             ->method('loadfile')
             ->with(self::equalTo('cast'));
 
@@ -84,15 +91,18 @@ class CastAudioFtTest extends TestCase
         $actionsService->method('getUploadActionUrl')
             ->willReturn('testUploadActionUrl');
 
+        $this->filesystem = $this->createMock(Filesystem::class);
+
         $this->ft = new Cast_audio_ft(
             $eeLoader,
-            $eeLang,
+            $this->eeLang,
             $this->eeCp,
             $normalizePaths,
             new EEValidationFactory(),
             $phpInternals,
             $uploadKeyService,
-            $actionsService
+            $actionsService,
+            $this->filesystem
         );
     }
 
@@ -378,6 +388,8 @@ class CastAudioFtTest extends TestCase
             'csrfToken' => CSRF_TOKEN,
             'uploadKey' => $this->uploadKey,
             'uploadUrl' => 'testUploadActionUrl',
+            'fieldName' => '',
+            'audioFileName' => '',
         ]);
 
         // Test having output in the buffer
@@ -431,5 +443,119 @@ class CastAudioFtTest extends TestCase
         $oldContent = ob_get_clean();
 
         self::assertEquals($oldContent, $echoContent);
+    }
+
+    public function testValidateNoUploadPath() : void
+    {
+        $data = ['foo' => 'bar'];
+
+        self::assertTrue($this->ft->validate($data));
+    }
+
+    public function testValidateInvalidUploadPath() : void
+    {
+        $data = [
+            'foo' => 'bar',
+            'cast_upload_path' => '/foo/bar',
+        ];
+
+        $this->eeLang->expects(self::once())
+            ->method('line')
+            ->with(self::equalTo('badFileUpload'))
+            ->willReturn('fooBadFileUpload');
+
+        self::assertSame(
+            'fooBadFileUpload',
+            $this->ft->validate($data)
+        );
+    }
+
+    public function testValidateValidUploadPath() : void
+    {
+        $data = [
+            'foo' => 'bar',
+            'cast_upload_path' => TESTS_BASE_PATH . '/filesystemTesting/testFile.txt',
+        ];
+
+        self::assertTrue($this->ft->validate($data));
+    }
+
+    public function testSaveBadData() : void
+    {
+        $errorClass = new class implements JsonSerializable {
+            public function jsonSerialize() : void
+            {
+                throw new LogicException('Testing');
+            }
+        };
+
+        self::assertSame('', $this->ft->save(['foo', $errorClass]));
+    }
+
+    public function testSaveNotArray() : void
+    {
+        self::assertSame('[]', $this->ft->save('fooBar'));
+    }
+
+    public function testSave() : void
+    {
+        self::assertSame('{"foo":"bar"}', $this->ft->save(['foo' => 'bar']));
+    }
+
+    public function testPostSaveBadData() : void
+    {
+        $this->filesystem->expects(self::never())->method(self::anything());
+
+        $this->ft->post_save('');
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function testPostSaveNoUploadFile() : void
+    {
+        $this->filesystem->expects(self::never())->method(self::anything());
+
+        $this->ft->post_save(json_encode([
+            'cast_upload_path' => '',
+            'cast_file_name' => 'fooBar',
+        ]));
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function testPostSaveNoFileName() : void
+    {
+        $this->filesystem->expects(self::never())->method(self::anything());
+
+        $this->ft->post_save(json_encode([
+            'cast_upload_path' => 'testFilePath',
+            'cast_file_name' => '',
+        ]));
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function testPostSave() : void
+    {
+        $this->filesystem->expects(self::at(0))
+            ->method('mkdir')
+            ->with(
+                self::equalTo('/--testNormalize'),
+                self::equalTo(0777)
+            );
+        $this->filesystem->expects(self::at(1))
+            ->method('rename')
+            ->with(
+                self::equalTo('testFilePath'),
+                self::equalTo('/--testNormalize/testFileName')
+            );
+
+        $this->ft->post_save(json_encode([
+            'cast_upload_path' => 'testFilePath',
+            'cast_file_name' => 'testFileName',
+        ]));
     }
 }
