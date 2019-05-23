@@ -8,6 +8,8 @@ use BuzzingPixel\Cast\Cast\Constants;
 use BuzzingPixel\Cast\Cast\Di;
 use BuzzingPixel\Cast\Cast\Facade\PhpInternals;
 use BuzzingPixel\Cast\Cast\Templating\TemplatingService;
+use BuzzingPixel\Cast\Cast\Uploading\FlysystemFactory;
+use BuzzingPixel\Cast\Cast\Uploading\FtpConfig;
 use BuzzingPixel\Cast\Cast\Uploading\UploadKeysServiceContract;
 use BuzzingPixel\Cast\ExpressionEngine\Service\ActionsService;
 use BuzzingPixel\Cast\ExpressionEngine\Service\NormalizePaths;
@@ -47,6 +49,10 @@ class CastAudioFtTest extends TestCase
     private $eeTemplate;
     /** @var MockObject&Filesystem */
     private $filesystem;
+    /** @var MockObject&FlysystemFactory */
+    private $flysystemFactory;
+    /** @var MockObject&PhpInternals */
+    private $phpInternals;
 
     /**
      * @throws Throwable
@@ -81,7 +87,7 @@ class CastAudioFtTest extends TestCase
             });
 
         /** @var MockObject&PhpInternals $phpInternals */
-        $phpInternals = $this->createMock(PhpInternals::class);
+        $this->phpInternals = $this->createMock(PhpInternals::class);
 
         /** @var MockObject&UploadKeysServiceContract $uploadKeyService */
         $uploadKeyService = $this->createMock(UploadKeysServiceContract::class);
@@ -98,6 +104,8 @@ class CastAudioFtTest extends TestCase
 
         $this->filesystem = $this->createMock(Filesystem::class);
 
+        $this->flysystemFactory = $this->createMock(FlysystemFactory::class);
+
         $this->ft = new Cast_audio_ft(
             $eeLoader,
             $this->eeLang,
@@ -105,10 +113,11 @@ class CastAudioFtTest extends TestCase
             $this->eeTemplate,
             $normalizePaths,
             new EEValidationFactory(),
-            $phpInternals,
+            $this->phpInternals,
             $uploadKeyService,
             $actionsService,
-            $this->filesystem
+            $this->filesystem,
+            $this->flysystemFactory
         );
     }
 
@@ -508,7 +517,10 @@ class CastAudioFtTest extends TestCase
 
     public function testSave() : void
     {
-        self::assertSame('{"foo":"bar","ftp":"n"}', $this->ft->save(['foo' => 'bar']));
+        self::assertSame('{"foo":"bar","cast_upload_path":"\/upload\/path","ftp":"n"}', $this->ft->save([
+            'foo' => 'bar',
+            'cast_upload_path' => '/upload/path',
+        ]));
     }
 
     public function testPostSaveBadData() : void
@@ -544,17 +556,23 @@ class CastAudioFtTest extends TestCase
         ]));
     }
 
+    /** @var FtpConfig|null */
+    private $ftpConfig;
+
     /**
      * @throws Throwable
      */
     public function testPostSave() : void
     {
+        $self = $this;
+
         $this->filesystem->expects(self::at(0))
             ->method('mkdir')
             ->with(
                 self::equalTo('/--testNormalize'),
                 self::equalTo(0777)
             );
+
         $this->filesystem->expects(self::at(1))
             ->method('rename')
             ->with(
@@ -562,6 +580,66 @@ class CastAudioFtTest extends TestCase
                 self::equalTo('/--testNormalize/testFileName'),
                 self::equalTo(true)
             );
+
+        $this->ft->post_save(json_encode([
+            'cast_upload_path' => 'testFilePath',
+            'cast_file_name' => 'testFileName',
+        ]));
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function testPostSaveWithFtp() : void
+    {
+        $self = $this;
+
+        $this->filesystem->expects(self::at(0))
+            ->method('mkdir')
+            ->with(
+                self::equalTo('/--testNormalize'),
+                self::equalTo(0777)
+            );
+
+        $this->filesystem->expects(self::at(1))
+            ->method('rename')
+            ->with(
+                self::equalTo('testFilePath'),
+                self::equalTo('/--testNormalize/testFileName'),
+                self::equalTo(true)
+            );
+
+        $this->ft->settings['cast_audio_use_ftp']                = 'y';
+        $this->ft->settings['cast_audio_upload_ftp_server']      = 'fooServer';
+        $this->ft->settings['cast_audio_upload_ftp_user_name']   = 'fooUsername';
+        $this->ft->settings['cast_audio_upload_ftp_password']    = 'fooPassword';
+        $this->ft->settings['cast_audio_upload_ftp_port']        = 123;
+        $this->ft->settings['cast_audio_upload_ftp_remote_path'] = '/foo/remote/path';
+
+        $flysystem = $this->createMock(\League\Flysystem\Filesystem::class);
+
+        $flysystem->expects(self::once())
+            ->method('writeStream')
+            ->with(
+                self::equalTo('/foo/remote/path--testNormalize/testFileName'),
+                self::equalTo('streamTest')
+            );
+
+        $this->flysystemFactory->expects(self::once())
+            ->method('makeFtp')
+            ->willReturnCallback(static function (FtpConfig $ftpConfig) use ($self, $flysystem) {
+                $self->ftpConfig = $ftpConfig;
+
+                return $flysystem;
+            });
+
+        $this->phpInternals->expects(self::once())
+            ->method('fopen')
+            ->with(
+                self::equalTo('/--testNormalize/testFileName'),
+                self::equalTo('r+')
+            )
+            ->willReturn('streamTest');
 
         $this->ft->post_save(json_encode([
             'cast_upload_path' => 'testFilePath',
