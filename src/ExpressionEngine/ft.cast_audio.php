@@ -365,7 +365,9 @@ class Cast_audio_ft extends EE_Fieldtype
             'uploadKey' => $this->uploadKeysService->createKey(),
             'uploadUrl' => $this->actionsService->getUploadActionUrl(),
             'fieldName' => $this->field_name,
-            'audioFileName' => $data['cast_file_name'] ?? '',
+            'fileName' => $data['cast_file_name'] ?? '',
+            'mimeType' => $data['cast_mime_type'] ?? '',
+            'fileSize' => $data['cast_file_size'] ?? '',
         ]);
     }
 

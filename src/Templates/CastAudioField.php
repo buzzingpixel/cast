@@ -14,14 +14,18 @@ use BuzzingPixel\Cast\Cast\Templating\TemplatingService;
 /** @var string $uploadKey */
 /** @var string $uploadUrl */
 /** @var string $fieldName */
-/** @var string $audioFileName */
+/** @var string $fileName */
+/** @var string $mimeType */
+/** @var string $fileSize */
 
 $translator = Di::diContainer()->get(Translator::class);
 ?>
 
 <div
     ref="CastAudioField"
-    data-audio-file-name="<?=$audioFileName?>"
+    data-file-name="<?=$fileName?>"
+    data-mime-type="<?=$mimeType?>"
+    data-file-size="<?=$fileSize?>"
     data-csrf-token-name="<?=$csrfTokenName?>"
     data-csrf-token="<?=$csrfToken?>"
     data-upload-key="<?=$uploadKey?>"
@@ -37,13 +41,25 @@ $translator = Di::diContainer()->get(Translator::class);
     <input
         type="hidden"
         name="<?=$fieldName?>[cast_upload_path]"
-        v-model="castUploadPath"
+        v-model="uploadPath"
     >
     <input
         type="hidden"
         name="<?=$fieldName?>[cast_file_name]"
-        v-model="castFileName"
-        value="<?=$audioFileName?>"
+        v-model="fileName"
+        value="<?=$fileName?>"
+    >
+    <input
+        type="hidden"
+        name="<?=$fieldName?>[cast_mime_type]"
+        v-model="mimeType"
+        value="<?=$mimeType?>"
+    >
+    <input
+        type="hidden"
+        name="<?=$fieldName?>[cast_file_size]"
+        v-model="fileSize"
+        value="<?=$fileSize?>"
     >
     <div class="CastAudioField__MainWrap">
         <div
@@ -82,7 +98,7 @@ $translator = Di::diContainer()->get(Translator::class);
                 <span class="CastAudioField__AudioFileIcon">
                     <?=$t->render('Icons/SoundFileIcon')?>
                 </span>
-                <span class="CastAudioField__AudioFileName">{{ castFileName }}</span>
+                <span class="CastAudioField__AudioFileName">{{ fileName }}</span>
             </div>
         </div>
     </div>

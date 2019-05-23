@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace BuzzingPixel\Cast\Cast\Facade;
 
 use function is_dir;
+use function Safe\filesize;
 use function Safe\mime_content_type;
 
 // phpcs:disable SlevomatCodingStandard.ControlStructures.ControlStructureSpacing.IncorrectLinesCountAfterControlStructure
@@ -22,6 +23,14 @@ class PhpInternals
         // @codeCoverageIgnoreStart
         /** @noinspection PhpUnhandledExceptionInspection */
         return mime_content_type($fileName);
+        // @codeCoverageIgnoreEnd
+    }
+
+    public function fileSize(string $fileName) : int
+    {
+        // @codeCoverageIgnoreStart
+        /** @noinspection PhpUnhandledExceptionInspection */
+        return filesize($fileName);
         // @codeCoverageIgnoreEnd
     }
 

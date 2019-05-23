@@ -23,17 +23,23 @@ class CastAudioField {
 
                 Instance.uploadUrl = String($el.getAttribute('data-upload-url'));
 
-                self.castFileName = String($el.getAttribute('data-audio-file-name'));
+                self.hasFile = $el.getAttribute('data-file-name') !== '';
 
-                self.hasFile = $el.getAttribute('data-audio-file-name') !== '';
+                self.fileName = String($el.getAttribute('data-file-name'));
+
+                self.mimeType = String($el.getAttribute('data-mime-type'));
+
+                self.fileSize = String($el.getAttribute('data-file-size'));
             },
 
             data: {
                 uploadIconIsActive: null,
                 uploadInProgress: null,
                 hasFile: null,
-                castUploadPath: null,
-                castFileName: null,
+                uploadPath: null,
+                fileName: null,
+                mimeType: null,
+                fileSize: null,
             },
 
             watch: {
@@ -44,9 +50,10 @@ class CastAudioField {
                         return;
                     }
 
-                    vm.castUploadPath = '';
-
-                    vm.castFileName = '';
+                    vm.uploadPath = '';
+                    vm.fileName = '';
+                    vm.mimeType = '';
+                    vm.fileSize = '';
                 },
             },
 
@@ -78,7 +85,6 @@ class CastAudioField {
                     self.preventDefault(e);
 
                     self.uploadIconIsActive = false;
-
                     self.uploadInProgress = true;
 
                     try {
@@ -103,16 +109,15 @@ class CastAudioField {
                     }
                 },
 
-                uploadComplete (fileLocation, fileName) {
+                uploadComplete (file) {
                     const self = this;
 
                     self.uploadInProgress = false;
-
                     self.hasFile = true;
-
-                    self.castUploadPath = fileLocation;
-
-                    self.castFileName = fileName;
+                    self.uploadPath = file.location;
+                    self.fileName = file.name;
+                    self.mimeType = file.mimeType;
+                    self.fileSize = file.fileSize;
                 },
 
                 uploadFailed () {
@@ -157,13 +162,14 @@ class CastAudioField {
 
                 if (!resp.data.success && typeof FailureCallback === 'function') {
                     FailureCallback(resp);
+                    return;
                 }
 
                 if (typeof SuccessCallback !== 'function') {
                     return;
                 }
 
-                SuccessCallback(resp.data.file.location, resp.data.file.name);
+                SuccessCallback(resp.data.file);
             })
             .catch((err) => {
                 if (typeof FailureCallback !== 'function') {

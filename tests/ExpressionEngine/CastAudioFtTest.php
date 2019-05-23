@@ -389,7 +389,9 @@ class CastAudioFtTest extends TestCase
             'uploadKey' => $this->uploadKey,
             'uploadUrl' => 'testUploadActionUrl',
             'fieldName' => '',
-            'audioFileName' => '',
+            'fileName' => '',
+            'mimeType' => '',
+            'fileSize' => '',
         ]);
 
         // Test having output in the buffer

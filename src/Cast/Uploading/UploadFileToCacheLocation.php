@@ -71,9 +71,10 @@ class UploadFileToCacheLocation
             return;
         }
 
-        /** @noinspection PhpUnhandledExceptionInspection */
         /** @noinspection PhpStrictTypeCheckingInspection */
-        if (! in_array($this->phpInternals->mimeContentType($tmpFile), Constants::VALID_PODCAST_AUDIO_MIME_TYPES)) {
+        $mimeType = $this->phpInternals->mimeContentType($tmpFile);
+
+        if (! in_array($mimeType, Constants::VALID_PODCAST_AUDIO_MIME_TYPES)) {
             $this->emitErrorResponse(
                 'Uploaded file is not an audio file.',
                 true
@@ -96,6 +97,8 @@ class UploadFileToCacheLocation
             'file' => [
                 'location' => $fileDestination,
                 'name' => $fileName,
+                'mimeType' => Constants::MIME_NORMALIZE[$mimeType],
+                'fileSize' => (string) $this->phpInternals->fileSize($fileDestination),
             ],
         ]));
         $this->emitterStack->emit($response);

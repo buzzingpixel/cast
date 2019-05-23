@@ -382,7 +382,7 @@ class UploadFileToCacheLocationTest extends TestCase
         self::assertSame('application/json', $headers['Content-Type'][0]);
 
         self::assertSame(
-            '{"success":true,"message":"","newUploadKey":"","file":{"location":"\/foo\/bar\/fooBar.mp3","name":"fooBar.mp3"}}',
+            '{"success":true,"message":"","newUploadKey":"","file":{"location":"\/foo\/bar\/fooBar.mp3","name":"fooBar.mp3","mimeType":"audio\/aac","fileSize":"0"}}',
             (string) $this->testResponse->getBody()
         );
     }
