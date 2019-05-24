@@ -525,6 +525,14 @@ class Cast_audio_ft extends EE_Fieldtype
         $fileUrl  = $this->normalizePaths->normalize($this->settings['cast_audio_upload_url'] ?? '');
         $fileUrl .= '/' . $this->content_id() . '/' . $fileName;
 
+        $ftp     = $this->settings['cast_audio_use_ftp'] ?? 'n';
+        $fileFtp = $data['ftp'] ?? 'n';
+
+        if ($ftp === 'y' && $fileFtp === 'y') {
+            $fileUrl  = $this->normalizePaths->normalize($this->settings['cast_audio_upload_ftp_remote_url'] ?? '');
+            $fileUrl .= '/' . $fileName;
+        }
+
         return $this->eeTemplate->parse_variables($tagdata, [
             [
                 'cast:file_name' => $fileName,

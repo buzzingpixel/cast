@@ -28,6 +28,10 @@ class NormalizePaths
 
         $basePath = rtrim($basePath, DIRECTORY_SEPARATOR);
 
+        $path = rtrim($path, '/');
+
+        $path = rtrim($path, DIRECTORY_SEPARATOR);
+
         return str_replace(
             [
                 '{base_url}',

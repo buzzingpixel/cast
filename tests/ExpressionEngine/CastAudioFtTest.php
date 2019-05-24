@@ -693,4 +693,38 @@ class CastAudioFtTest extends TestCase
             '{test}'
         ));
     }
+
+    /**
+     * @throws Throwable
+     */
+    public function testReplaceWithFtp() : void
+    {
+        $this->eeTemplate->expects(self::once())
+            ->method('parse_variables')
+            ->with(
+                self::equalTo('{test}'),
+                self::equalTo([
+                    [
+                        'cast:file_name' => 'testFileName',
+                        'cast:mime_type' => 'testMimeType',
+                        'cast:file_size' => 'testFileSize',
+                        'cast:file_url' => '--testNormalize/testFileName',
+                    ],
+                ])
+            )
+            ->willReturn('testParseVarsReturn');
+
+        $this->ft->settings['cast_audio_use_ftp'] = 'y';
+
+        self::assertSame('testParseVarsReturn', $this->ft->replace_tag(
+            json_encode([
+                'cast_file_name' => 'testFileName',
+                'cast_mime_type' => 'testMimeType',
+                'cast_file_size' => 'testFileSize',
+                'ftp' => 'y',
+            ]),
+            null,
+            '{test}'
+        ));
+    }
 }
