@@ -38,6 +38,14 @@ class UploadKeysServiceTest extends TestCase
     {
         $self = $this;
 
+        /** @var MockObject&Query $queryBuilder0 */
+        $queryBuilder0 = $this->createMock(Query::class);
+
+        $queryBuilder0->expects(self::at(0))
+            ->method('table_exists')
+            ->with(self::equalTo('cast_audio_upload_keys'))
+            ->willReturn(true);
+
         $this->queryBuilder1 = $this->createMock(Query::class);
 
         $this->queryBuilder1->expects(self::at(0))
@@ -60,18 +68,24 @@ class UploadKeysServiceTest extends TestCase
         $queryBuilderFactory = $this->createMock(QueryBuilderFactory::class);
 
         $queryBuilderFactory->method('make')
-            ->willReturnCallback(function () use ($self) {
+            ->willReturnCallback(function () use ($self, $queryBuilder0) {
+                $calls = $self->factoryMakeCalls;
+
                 $self->factoryMakeCalls++;
 
-                if ($self->factoryMakeCalls === 1) {
+                if ($calls === 0) {
+                    return $queryBuilder0;
+                }
+
+                if ($calls === 1) {
                     return $this->queryBuilder1;
                 }
 
-                if ($self->factoryMakeCalls === 2) {
+                if ($calls === 2) {
                     return $this->queryBuilder2;
                 }
 
-                if ($self->factoryMakeCalls === 3) {
+                if ($calls === 3) {
                     return $this->queryBuilder3;
                 }
 
@@ -89,6 +103,30 @@ class UploadKeysServiceTest extends TestCase
         $this->uploadKeysService = new UploadKeysService(
             $queryBuilderFactory,
             $uuidFactory
+        );
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function testTableDoesNotExist() : void
+    {
+        /** @var MockObject&Query $queryBuilder0 */
+        $queryBuilder = $this->createMock(Query::class);
+
+        $queryBuilder->expects(self::at(0))
+            ->method('table_exists')
+            ->with(self::equalTo('cast_audio_upload_keys'))
+            ->willReturn(false);
+
+        /** @var MockObject&QueryBuilderFactory $queryBuilderFactory */
+        $queryBuilderFactory = $this->createMock(QueryBuilderFactory::class);
+
+        $queryBuilderFactory->expects(self::once())->method('make')->willReturn($queryBuilder);
+
+        new UploadKeysService(
+            $queryBuilderFactory,
+            new UuidFactory()
         );
     }
 

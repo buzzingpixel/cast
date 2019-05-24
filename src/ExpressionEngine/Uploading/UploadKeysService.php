@@ -24,6 +24,12 @@ class UploadKeysService implements UploadKeysServiceContract
         $this->queryBuilderFactory = $queryBuilderFactory;
         $this->uuidFactory         = $uuidFactory;
 
+        $tableExists = $this->queryBuilderFactory->make()->table_exists('cast_audio_upload_keys');
+
+        if (! $tableExists) {
+            return;
+        }
+
         $queryBuilder = $this->queryBuilderFactory->make();
 
         $queryBuilder->where('expires < ' . CommonTime::getCommonTime()->getTimestamp());
