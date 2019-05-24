@@ -5,6 +5,7 @@ declare(strict_types=1);
 use BuzzingPixel\Cast\Cast\Constants;
 use BuzzingPixel\Cast\Cast\Di;
 use BuzzingPixel\Cast\Cast\Facade\PhpInternals;
+use BuzzingPixel\Cast\Cast\Request\Storage;
 use BuzzingPixel\Cast\Cast\Templating\TemplatingService;
 use BuzzingPixel\Cast\Cast\Uploading\FlysystemFactory;
 use BuzzingPixel\Cast\Cast\Uploading\FtpConfig;
@@ -39,6 +40,8 @@ class Cast_audio_ft extends EE_Fieldtype
     private $lang;
     /** @var Cp|null */
     private $eeCp;
+    /** @var EE_Template */
+    private $eeTemplate;
     /** @var NormalizePaths */
     private $normalizePaths;
     /** @var ValidationFactory */
@@ -49,14 +52,14 @@ class Cast_audio_ft extends EE_Fieldtype
     private $uploadKeysService;
     /** @var ActionsService */
     private $actionsService;
-    /** @var TemplatingService */
-    private $templatingService;
     /** @var Filesystem */
     private $filesystem;
     /** @var FlysystemFactory */
     private $flysystemFactory;
-    /** @var EE_Template */
-    private $eeTemplate;
+    /** @var Storage */
+    private $storage;
+    /** @var TemplatingService */
+    private $templatingService;
 
     public function __construct(
         ?EE_Loader $loader = null,
@@ -70,6 +73,7 @@ class Cast_audio_ft extends EE_Fieldtype
         ?ActionsService $actionsService = null,
         ?Filesystem $filesystem = null,
         ?FlysystemFactory $flysystemFactory = null,
+        ?Storage $storage = null,
         ?TemplatingService $templatingService = null
     ) {
         // @codeCoverageIgnoreStart
@@ -118,6 +122,10 @@ class Cast_audio_ft extends EE_Fieldtype
             $flysystemFactory = Di::diContainer()->get(FlysystemFactory::class);
         }
 
+        if (! $storage) {
+            $storage = Di::diContainer()->get(Storage::class);
+        }
+
         if (! $templatingService) {
             $templatingService = Di::diContainer()->get(TemplatingService::class);
         }
@@ -134,6 +142,7 @@ class Cast_audio_ft extends EE_Fieldtype
         $this->actionsService    = $actionsService;
         $this->filesystem        = $filesystem;
         $this->flysystemFactory  = $flysystemFactory;
+        $this->storage           = $storage;
         $this->templatingService = $templatingService;
 
         $castPath = PATH_THIRD . 'cast/';
@@ -553,7 +562,7 @@ class Cast_audio_ft extends EE_Fieldtype
     {
         // @codeCoverageIgnoreStart
 
-        if (! $this->eeCp) {
+        if ($this->storage->get('cpCssSet') === true || ! $this->eeCp) {
             return;
         }
 
@@ -575,13 +584,15 @@ class Cast_audio_ft extends EE_Fieldtype
         $cssTag = '<link rel="stylesheet" href="' . $css . '">';
 
         $this->eeCp->add_to_head($cssTag);
+
+        $this->storage->set('cpCssSet', true);
     }
 
     private function setCpJs() : void
     {
         // @codeCoverageIgnoreStart
 
-        if (! $this->eeCp) {
+        if ($this->storage->get('cpJsSet') === true || ! $this->eeCp) {
             return;
         }
 
@@ -611,5 +622,7 @@ class Cast_audio_ft extends EE_Fieldtype
         $jsTag = '<script type="module" src="' . $js . '"></script>';
 
         $this->eeCp->add_to_foot($jsTag);
+
+        $this->storage->set('cpJsSet', true);
     }
 }
