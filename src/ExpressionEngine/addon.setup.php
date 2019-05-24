@@ -4,6 +4,14 @@ declare(strict_types=1);
 
 use BuzzingPixel\Cast\Cast\Constants;
 
+// @codeCoverageIgnoreStart
+$autoloader = __DIR__ . '/vendor/autoload.php';
+if (file_exists($autoloader)) {
+    /** @noinspection PhpIncludeInspection */
+    require_once $autoloader;
+}
+// @codeCoverageIgnoreEnd
+
 return [
     'author' => 'TJ Draper',
     'author_url' => 'https://buzzingpixel.com',
