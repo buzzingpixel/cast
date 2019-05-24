@@ -16,5 +16,9 @@ return [
             'name' => 'Cast Audio',
             'compatibility' => 'cast_audio',
         ],
+        'cast_episode_number' => [
+            'name' => 'Cast Episode Number',
+            'compatibility' => 'cast_episode_number',
+        ],
     ],
 ];

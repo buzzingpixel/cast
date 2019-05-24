@@ -39,6 +39,7 @@
         },
         "classmap": [
             "src/ExpressionEngine/ft.cast_audio.php",
+            "src/ExpressionEngine/ft.cast_episode_number.php",
             "src/ExpressionEngine/mcp.cast.php",
             "src/ExpressionEngine/mod.cast.php",
             "src/ExpressionEngine/upd.cast.php"
@@ -46,25 +47,22 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests"
+            "Tests\\": "tests",
+            "EllisLab\\": "work/testing/ee3/system/ee/EllisLab"
         },
         "classmap": [
             "work/testing/ee3/system/ee/legacy/fieldtypes/EE_Fieldtype.php",
             "work/testing/ee3/system/ee/legacy/core/Loader.php",
             "work/testing/ee3/system/ee/legacy/core/Lang.php",
             "work/testing/ee3/system/ee/legacy/core/Config.php",
-            "work/testing/ee3/system/ee/EllisLab/ExpressionEngine/Service/Validation/Rule/Callback.php",
-            "work/testing/ee3/system/ee/EllisLab/ExpressionEngine/Service/Validation/Factory.php",
-            "work/testing/ee3/system/ee/EllisLab/ExpressionEngine/Service/Validation/ValidationRule.php",
-            "work/testing/ee3/system/ee/EllisLab/ExpressionEngine/Service/Validation/Result.php",
-            "work/testing/ee3/system/ee/EllisLab/ExpressionEngine/Service/Validation/Validator.php",
             "work/testing/ee3/system/ee/legacy/libraries/Cp.php",
             "work/testing/ee3/system/ee/legacy/database/DB_forge.php",
-            "work/testing/ee3/system/ee/EllisLab/ExpressionEngine/Service/Database/Query.php",
             "work/testing/ee3/system/ee/legacy/database/drivers/mysqli/mysqli_driver.php",
             "work/testing/ee3/system/ee/legacy/core/Input.php",
             "work/testing/ee3/system/ee/legacy/database/DB_result.php",
-            "work/testing/ee3/system/ee/legacy/libraries/Template.php"
+            "work/testing/ee3/system/ee/legacy/libraries/Template.php",
+            "work/testing/ee3/system/ee/legacy/core/URI.php",
+            "work/testing/ee3/system/ee/legacy/core/Input.php"
         ]
     },
     "config": {

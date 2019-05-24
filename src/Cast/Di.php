@@ -16,9 +16,12 @@ use CI_DB_forge;
 use Cp;
 use DI\ContainerBuilder;
 use EE_Config;
+use EE_Input;
 use EE_Lang;
 use EE_Loader;
 use EE_Template;
+use EE_URI;
+use EllisLab\ExpressionEngine\Service\Model\Facade as ModelFacade;
 use EllisLab\ExpressionEngine\Service\Validation\Factory as EEValidationFactory;
 use Psr\Container\ContainerInterface;
 use Zend\HttpHandlerRunner\Emitter\EmitterStack;
@@ -79,6 +82,9 @@ class Di
             EE_Config::class => static function () {
                 return ee()->config;
             },
+            EE_Input::class => static function () {
+                return ee()->input;
+            },
             EE_Lang::class => static function () {
                 return ee()->lang;
             },
@@ -90,6 +96,9 @@ class Di
 
                 return ee()->TMPL;
             },
+            EE_URI::class => static function () {
+                return ee()->uri;
+            },
             EmitterStack::class => static function (ContainerInterface $di) {
                 $stack = new EmitterStack();
 
@@ -99,6 +108,9 @@ class Di
             },
             EEValidationFactory::class => static function () {
                 return ee('Validation');
+            },
+            ModelFacade::class => static function () {
+                return ee('Model');
             },
             Translator::class => static function () {
                 // TODO: determine what system this is (Craft/EE), then determine lang, then get appropriate translation

@@ -79,7 +79,7 @@ class Cast_audio_ft extends EE_Fieldtype
         // @codeCoverageIgnoreStart
 
         if (! $loader) {
-            $loader =  Di::diContainer()->get(EE_Loader::class);
+            $loader = Di::diContainer()->get(EE_Loader::class);
         }
 
         if (! $lang) {
@@ -158,7 +158,6 @@ class Cast_audio_ft extends EE_Fieldtype
 
         $lang->loadfile('cast');
 
-        // Run parent constructor
         parent::__construct();
     }
 
