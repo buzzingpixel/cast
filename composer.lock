@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bb091c4cd423fb12b90c61e3c4316b22",
+    "content-hash": "9a70ec7ab21a61486e4a366d980d00c3",
     "packages": [
         {
             "name": "jeremeamia/SuperClosure",

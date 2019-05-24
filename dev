@@ -41,6 +41,7 @@ if [[ -z "${cmd}" ]]; then
     printf "  ./dev yarn [args]\n"
     printf "  ./dev composer [args]\n"
     printf "  ./dev login [args]${Reset}\n"
+    printf "  ./dev package";
 fi
 
 ## If command is up or run, we need to run the docker containers and install composer and yarn dependencies
@@ -94,6 +95,12 @@ fi
 if [[ "${cmd}" = "login" ]]; then
     valid=true;
     docker exec -it --user root ${secondArg}-cast bash
+fi
+
+## Login to a container if requested
+if [[ "${cmd}" = "package" ]]; then
+    valid=true;
+    docker exec -it --user root --workdir /app/work/ee-standalone-packaging php-cast bash -c "cd /app/work/ee-standalone-packaging && php package-for-ee"
 fi
 
 ## If there was no valid command found, warn user

@@ -18,6 +18,7 @@ if "%cmd%" == "" (
     echo   .\dev yarn [args]
     echo   .\dev composer [args]
     echo   .\dev login [args]
+    echo   .\dev package
 )
 
 :: If command is up or run, we need to run the docker containers and install composer and yarn dependencies
@@ -79,6 +80,12 @@ if "%cmd%" == "composer" (
 if "%cmd%" == "login" (
     set valid=true
     docker exec -it --user root %secondArg%-cast bash
+)
+
+:: Package
+if "%cmd%" == "package" (
+    set valid=true
+    docker exec -it --user root --workdir /app/work/ee-standalone-packaging php-cast bash -c "cd /app/work/ee-standalone-packaging && php package-for-ee"
 )
 
 :: If there was no valid command found, warn user

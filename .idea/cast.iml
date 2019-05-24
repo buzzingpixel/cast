@@ -96,6 +96,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/zendframework/zend-diactoros" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/zendframework/zend-httphandlerrunner" />
       <excludeFolder url="file://$MODULE_DIR$/work/code_coverage" />
+      <excludeFolder url="file://$MODULE_DIR$/work/ee-standalone-packaging" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

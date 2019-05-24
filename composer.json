@@ -1,6 +1,7 @@
 {
     "name": "buzzingpixel/cast",
     "description": "Podcasting CMS addon",
+    "version": "1.0.0",
     "license": "proprietary",
     "homepage": "https://www.buzzingpixel.com",
     "authors": [
