@@ -1,2 +1,2 @@
-import CastAudioField from"./Components/CastAudioField.js";const audioFields=document.querySelectorAll('[ref="CastAudioField"]');audioFields.forEach(e=>{const o=new CastAudioField(e);new Vue(o)});
+import CastAudioField from"./Components/CastAudioField.js";import FormSubmission from"./Components/FormSubmission.js";(()=>{const o=document.querySelectorAll('[ref="CastAudioField"]'),e=document.querySelectorAll("body").item(0),i=document.querySelectorAll("form");o.forEach(o=>{new CastAudioField(o)}),i.forEach(o=>{new FormSubmission(o,e)})})();
 //# sourceMappingURL=main.js.map

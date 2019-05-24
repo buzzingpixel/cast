@@ -1,36 +1,13 @@
-/**
- * TODO: respond to file close being clicked
- */
 class CastAudioField {
+    /**
+     * @param {HTMLElement} el
+     */
     constructor (el) {
         const Instance = this;
 
-        return {
+        // noinspection ES6ModulesDependencies,TypeScriptUMDGlobal
+        Instance.vm = new Vue({
             el,
-
-            mounted () {
-                const self = this;
-
-                const { $el } = self;
-
-                Instance.vm = self;
-
-                Instance.csrfTokenName = String($el.getAttribute('data-csrf-token-name'));
-
-                Instance.csrfToken = String($el.getAttribute('data-csrf-token'));
-
-                Instance.uploadKey = String($el.getAttribute('data-upload-key'));
-
-                Instance.uploadUrl = String($el.getAttribute('data-upload-url'));
-
-                self.hasFile = $el.getAttribute('data-file-name') !== '';
-
-                self.fileName = String($el.getAttribute('data-file-name'));
-
-                self.mimeType = String($el.getAttribute('data-mime-type'));
-
-                self.fileSize = String($el.getAttribute('data-file-size'));
-            },
 
             data: {
                 uploadIconIsActive: null,
@@ -55,6 +32,27 @@ class CastAudioField {
                     vm.mimeType = '';
                     vm.fileSize = '';
                 },
+            },
+
+            mounted () {
+                const self = this;
+                const { $el } = self;
+
+                Instance.csrfTokenName = String($el.getAttribute('data-csrf-token-name'));
+
+                Instance.csrfToken = String($el.getAttribute('data-csrf-token'));
+
+                Instance.uploadKey = String($el.getAttribute('data-upload-key'));
+
+                Instance.uploadUrl = String($el.getAttribute('data-upload-url'));
+
+                self.hasFile = $el.getAttribute('data-file-name') !== '';
+
+                self.fileName = String($el.getAttribute('data-file-name'));
+
+                self.mimeType = String($el.getAttribute('data-mime-type'));
+
+                self.fileSize = String($el.getAttribute('data-file-size'));
             },
 
             methods: {
@@ -130,7 +128,7 @@ class CastAudioField {
                     this.hasFile = false;
                 },
             },
-        };
+        });
     }
 
     /**

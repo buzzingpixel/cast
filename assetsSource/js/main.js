@@ -1,11 +1,17 @@
 /* eslint-disable no-new */
 import CastAudioField from './Components/CastAudioField.js';
+import FormSubmission from './Components/FormSubmission.js';
 
-const audioFields = document.querySelectorAll('[ref="CastAudioField"]');
+(() => {
+    const audioFields = document.querySelectorAll('[ref="CastAudioField"]');
+    const body = document.querySelectorAll('body').item(0);
+    const forms = document.querySelectorAll('form');
 
-audioFields.forEach((el) => {
-    const CastAudioFieldInstance = new CastAudioField(el);
+    audioFields.forEach((field) => {
+        new CastAudioField(field);
+    });
 
-    // noinspection ES6ModulesDependencies,TypeScriptUMDGlobal
-    new Vue(CastAudioFieldInstance);
-});
+    forms.forEach((form) => {
+        new FormSubmission(form, body);
+    });
+})();
