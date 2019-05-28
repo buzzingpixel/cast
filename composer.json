@@ -74,6 +74,7 @@
     },
     "extra": {
         "handle": "cast",
-        "systemPath": "src/ExpressionEngine"
+        "systemPath": "src/ExpressionEngine",
+        "themePath": "themes/cast"
     }
 }
