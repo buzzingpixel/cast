@@ -31,6 +31,11 @@ exec("cp -r {$appDir}/src/* {$systemDir}/src/");
 exec("cp -r {$appDir}/themes/* {$themesDir}/");
 
 $fileSystem->rename(
+    "{$systemDir}/src/ExpressionEngine/language",
+    "{$systemDir}/language"
+);
+
+$fileSystem->rename(
     "{$systemDir}/src/ExpressionEngine/addon.setup.php",
     "{$systemDir}/addon.setup.php"
 );

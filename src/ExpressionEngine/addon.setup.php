@@ -12,7 +12,6 @@ if (file_exists($autoloader)) {
 }
 
 spl_autoload_register(static function ($class) : void {
-    /** Dirty hack to make sure that EE email library is loaded when requesting it from the Executive DI */
     if ($class === 'CI_DB_forge') {
         ee()->load->dbforge();
 
