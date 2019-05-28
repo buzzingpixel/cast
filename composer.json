@@ -13,6 +13,7 @@
     ],
     "require": {
         "php": "^7.1",
+        "doctrine/annotations": "^1.6",
         "league/flysystem": "^1.0",
         "php-di/php-di": "^6.0",
         "ramsey/uuid": "^3.8",
