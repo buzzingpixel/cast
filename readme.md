@@ -2,11 +2,11 @@
 
 Provides fieldtypes for podcasting.
 
-Cast Audio:
+## Cast Audio:
 
 A field type for uploading audio files. Files are always uploaded locally to the directory specified by the field type. Additionally, files can be uploaded to a remote FTP server (This is great for LibSyn, for instance) and served from the remote URL of your choice.
 
-ExpressionEngine field type variables:
+### ExpressionEngine field type variables:
 
 ```
 {exp:channel:entries ...params}
@@ -16,6 +16,18 @@ ExpressionEngine field type variables:
         File Size (bytes): {cast:file_size}
         File URL: {cast:file_url}
     {/some_cast_audio_field}
+{/exp:channel:entries}
+```
+
+## Cast Episode Number
+
+A fieldtype that tracks the episode number.
+
+### ExpressionEngine field type variables:
+
+```
+{exp:channel:entries ...params}
+    Episode Number: {cast:some_cast_episode_number_field}
 {/exp:channel:entries}
 ```
 
