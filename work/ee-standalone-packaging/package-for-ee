@@ -84,7 +84,7 @@ exec("composer install -d {$systemDir} --no-suggest --no-progress");
 /** @noinspection PhpComposerExtensionStubsInspection */
 $zip = new ZipArchive();
 /** @noinspection PhpComposerExtensionStubsInspection */
-$zip->open("{$baseDir}/cast-{$composerJson['version']}.zip", ZipArchive::CREATE | ZipArchive::OVERWRITE);
+$zip->open("{$baseDir}/cast-ee-{$composerJson['version']}.zip", ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
 $files = new RecursiveIteratorIterator(
     new RecursiveDirectoryIterator($packageDir),
