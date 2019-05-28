@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use BuzzingPixel\Cast\Cast\Constants;
+use function Safe\spl_autoload_register;
 
 // @codeCoverageIgnoreStart
 $autoloader = __DIR__ . '/vendor/autoload.php';
@@ -11,6 +12,7 @@ if (file_exists($autoloader)) {
     require_once $autoloader;
 }
 
+/** @noinspection PhpUnhandledExceptionInspection */
 spl_autoload_register(static function ($class) : void {
     if ($class === 'CI_DB_forge') {
         ee()->load->dbforge();
